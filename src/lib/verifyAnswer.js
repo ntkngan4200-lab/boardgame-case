@@ -18,3 +18,9 @@ export async function verifyAnswer(question, optionIds) {
   const key = `${question.id}:${[...optionIds].sort().join(',')}`
   return (await sha256Hex(key)) === question.answerHash
 }
+
+// Mã truy cập: bỏ khoảng trắng, không phân biệt hoa thường
+export async function verifyAccessCode(access, code) {
+  const normalized = code.trim().toUpperCase()
+  return access.codeHashes.includes(await sha256Hex(`${access.productId}:${normalized}`))
+}

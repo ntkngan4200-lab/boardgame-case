@@ -12,7 +12,7 @@ export function ComingSoonPage() {
           to="/"
           className="mt-8 inline-block rounded-sm bg-maroon px-5 py-3 text-sm font-semibold text-cream hover:bg-graphite"
         >
-          Về trang câu hỏi
+          Về trang chủ
         </Link>
       </div>
     </section>

@@ -1,8 +1,16 @@
-import { Outlet } from 'react-router-dom'
+import { useLayoutEffect } from 'react'
+import { Outlet, useLocation } from 'react-router-dom'
 import { SiteFootnote } from '../components/SiteFootnote'
 import { SiteHeader } from '../components/SiteHeader'
 
 export function SiteLayout() {
+  const { pathname } = useLocation()
+
+  // Sang trang mới (vd. bấm link ở Footnote) thì về đầu trang, không giữ vị trí cuộn cũ
+  useLayoutEffect(() => {
+    window.scrollTo(0, 0)
+  }, [pathname])
+
   return (
     <div className="flex min-h-dvh flex-col">
       <a

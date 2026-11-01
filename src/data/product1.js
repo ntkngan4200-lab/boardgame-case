@@ -4,7 +4,7 @@ import ggMapsImage from '../assets/evidence/gg-maps.jpg'
 import nanNhanImage from '../assets/evidence/nan-nhan.jpg'
 import vatChungImage from '../assets/evidence/vat-chung.jpg'
 
-// Product 1 — Vụ án Phạm Thuỳ Chi.
+// Product 1 — Vụ án Phạm Thùy Chi.
 // Mỗi câu hỏi có key "<product>/<objective>/<question>" khớp với URL.
 // pick: số lựa chọn người chơi phải đánh dấu (mặc định 1).
 // answerHash = SHA-256 của "<id>:<các optionId đúng, sắp xếp, nối bằng dấu phẩy>", tạo bằng:
@@ -38,12 +38,12 @@ const caseDocuments = [
   'Ảnh vật chứng 2 - Vật chứng thu giữ tại hiện trường',
   'Ảnh hiện trường 1 - Thi thể nạn nhân Phạm Thùy Chi',
   'Ảnh hiện trường 2 - Phòng 404',
-  'Ảnh hiện trường 3 - Phòng 403 với nhiều hình ảnh của Phạm Thuỳ Chi',
+  'Ảnh hiện trường 3 - Phòng 403 với nhiều hình ảnh của Phạm Thùy Chi',
   'Ảnh trích xuất camera lúc 21g00 09/10/2026',
   'Ảnh trích xuất từ camera lúc 21g30 09/10/2026',
   'Thư gửi các thám tử - Giai đoạn 2',
   'Record cuộc gọi từ bàn lễ tân',
-  'Ảnh chụp màn hình điện thoại của Phạm Thuỳ Chi',
+  'Ảnh chụp màn hình điện thoại của Phạm Thùy Chi',
   'Thư gửi các thám tử - Giai đoạn 3',
   'Biên bản Hỏi cung Bị can - Trần Chi Linh',
 ]
@@ -61,7 +61,7 @@ const questions = {
   'p1/o1/q1': {
     id: 'p1-o1-q1',
     stage: 'Giai đoạn 1',
-    heading: 'Mục đích Phạm Thuỳ Chi đến Khách sạn Mai Hoa',
+    heading: 'Mục đích Phạm Thùy Chi đến Khách sạn Mai Hoa',
     options: [
       { id: 'lam-gai', label: 'Làm gái' },
       { id: 'hen-ho', label: 'Hẹn hò' },
@@ -71,6 +71,7 @@ const questions = {
       { id: 'nghi-duong', label: 'Nghỉ dưỡng' },
     ],
     answerHash: 'c0ce7f45e88d70ff2d00fae07c40bd3096fdc41415bf38e5f2ca5bdd59a9d0ed',
+    backTo: '/p1/truy-cap',
     next: {
       correct: '/p1/o1/q2',
       wrong: '/p1/o1/q1/sai',
@@ -79,9 +80,9 @@ const questions = {
   'p1/o1/q2': {
     id: 'p1-o1-q2',
     stage: 'Giai đoạn 1',
-    heading: 'Mục đích Phạm Thuỳ Chi đến Khách sạn Mai Hoa',
+    heading: 'Mục đích Phạm Thùy Chi đến Khách sạn Mai Hoa',
     backTo: '/p1/o1/q1',
-    prompt: 'Phạm Thuỳ Chi đến Khách sạn Mai Hoa để buôn lậu. Ba bằng chứng nào có thể chứng minh được việc đó?',
+    prompt: 'Phạm Thùy Chi đến Khách sạn Mai Hoa để buôn lậu. Ba bằng chứng nào có thể chứng minh được việc đó?',
     pick: 3,
     options: documentOptions(27),
     answerHash: '5be24700b48924ee55aa5c60e7ccb7cd0d7487f17c2a341ac3b93f13d7307486',
@@ -99,7 +100,7 @@ const questions = {
   'p1/o2/q1': {
     id: 'p1-o2-q1',
     stage: 'Giai đoạn 2',
-    heading: 'Hung thủ đã sát hại Phạm Thuỳ Chi',
+    heading: 'Hung thủ đã sát hại Phạm Thùy Chi',
     backTo: '/p1/o1/giai-thich',
     options: [
       { id: 'tran-trung-duc', label: 'Trần Trung Đức' },
@@ -116,9 +117,9 @@ const questions = {
   'p1/o2/q2': {
     id: 'p1-o2-q2',
     stage: 'Giai đoạn 2',
-    heading: 'Hung thủ đã sát hại Phạm Thuỳ Chi',
+    heading: 'Hung thủ đã sát hại Phạm Thùy Chi',
     backTo: '/p1/o2/q1',
-    prompt: 'Hai bằng chứng nào có thể chứng minh Trần Chi Linh là hung thủ sát hại Phạm Thuỳ Chi?',
+    prompt: 'Hai bằng chứng nào có thể chứng minh Trần Chi Linh là hung thủ sát hại Phạm Thùy Chi?',
     pick: 2,
     options: documentOptions(30),
     answerHash: 'e4151bd00948035a6efd84800a72165b032573ffe38fb648d9226dc9b943fbfd',
@@ -138,27 +139,27 @@ const questions = {
 const falseAnswers = {
   'p1/o1/q1': {
     claim:
-      'Phạm Thuỳ Chi không thật sự đến khách sạn vì lý do này. Hãy chú ý kỹ hơn đến các chi tiết được cung cấp.',
+      'Phạm Thùy Chi không thật sự đến khách sạn vì lý do này. Hãy chú ý kỹ hơn đến các chi tiết được cung cấp.',
     hints: ['', '', ''],
   },
   'p1/o1/q2': {
     // Chọn theo số bằng chứng đúng; không biết số (mở trực tiếp trang) thì dùng "default"
     claims: {
-      0: 'Chưa có bằng chứng nào được chọn chứng minh trực tiếp mục đích Phạm Thuỳ Chi đến Khách sạn Mai Hoa. Hãy chú ý kỹ hơn đến các chi tiết được cung cấp.',
-      1: 'Chỉ một trong ba bằng chứng được chọn chứng minh trực tiếp mục đích Phạm Thuỳ Chi đến Khách sạn Mai Hoa. Hãy chú ý kỹ hơn đến các chi tiết được cung cấp.',
-      2: 'Chỉ hai trong ba bằng chứng được chọn chứng minh trực tiếp mục đích Phạm Thuỳ Chi đến Khách sạn Mai Hoa. Hãy chú ý kỹ hơn đến các chi tiết được cung cấp.',
+      0: 'Chưa có bằng chứng nào được chọn chứng minh trực tiếp mục đích Phạm Thùy Chi đến Khách sạn Mai Hoa. Hãy chú ý kỹ hơn đến các chi tiết được cung cấp.',
+      1: 'Chỉ một trong ba bằng chứng được chọn chứng minh trực tiếp mục đích Phạm Thùy Chi đến Khách sạn Mai Hoa. Hãy chú ý kỹ hơn đến các chi tiết được cung cấp.',
+      2: 'Chỉ hai trong ba bằng chứng được chọn chứng minh trực tiếp mục đích Phạm Thùy Chi đến Khách sạn Mai Hoa. Hãy chú ý kỹ hơn đến các chi tiết được cung cấp.',
       default: 'Hãy chú ý kỹ hơn đến các chi tiết được cung cấp.',
     },
     hints: ['', '', ''],
   },
   'p1/o2/q1': {
-    claim: 'Người này không phải là hung thủ đã sát hại Phạm Thuỳ Chi. Hãy chú ý kỹ hơn đến các chi tiết được cung cấp.',
+    claim: 'Người này không phải là hung thủ đã sát hại Phạm Thùy Chi. Hãy chú ý kỹ hơn đến các chi tiết được cung cấp.',
     hints: ['', ''],
   },
   'p1/o2/q2': {
     claims: {
-      0: 'Chưa có bằng chứng nào được chọn chứng minh trực tiếp Trần Chi Linh là hung thủ đã sát hại Phạm Thuỳ Chi. Hãy chú ý kỹ hơn đến các chi tiết được cung cấp.',
-      1: 'Chỉ một trong hai bằng chứng được chọn chứng minh trực tiếp Trần Chi Linh là hung thủ đã sát hại Phạm Thuỳ Chi. Hãy chú ý kỹ hơn đến các chi tiết được cung cấp.',
+      0: 'Chưa có bằng chứng nào được chọn chứng minh trực tiếp Trần Chi Linh là hung thủ đã sát hại Phạm Thùy Chi. Hãy chú ý kỹ hơn đến các chi tiết được cung cấp.',
+      1: 'Chỉ một trong hai bằng chứng được chọn chứng minh trực tiếp Trần Chi Linh là hung thủ đã sát hại Phạm Thùy Chi. Hãy chú ý kỹ hơn đến các chi tiết được cung cấp.',
       default: 'Hãy chú ý kỹ hơn đến các chi tiết được cung cấp.',
     },
     hints: ['', ''],
@@ -171,8 +172,8 @@ const falseAnswers = {
 const explanations = {
   'p1/o1': {
     stage: 'Giai đoạn 1',
-    heading: 'Mục đích Phạm Thuỳ Chi đến Khách sạn Mai Hoa',
-    conclusion: 'Ba bằng chứng trên đã chứng minh trực tiếp Phạm Thuỳ Chi đến Khách sạn Mai Hoa để buôn lậu',
+    heading: 'Mục đích Phạm Thùy Chi đến Khách sạn Mai Hoa',
+    conclusion: 'Ba bằng chứng trên đã chứng minh trực tiếp Phạm Thùy Chi đến Khách sạn Mai Hoa để buôn lậu',
     wall: {
       description:
         'Bức tường bằng chứng: Bản tin ngày 10/10/2026, Ảnh vật chứng 2 và Ảnh trích xuất camera lúc 21g00. Chiếc nhẫn đỏ trên tay hai người đàn ông trong bài báo, chiếc nhẫn đỏ số 2 trong vật chứng và chiếc nhẫn đỏ trên ngón tay người trong camera được khoanh đỏ và nối với nhau bằng dây đỏ.',
@@ -244,19 +245,19 @@ const explanations = {
     // Tờ ghi chú ghim trên bảng, giải thích vì sao ba bằng chứng nối được với nhau
     note: {
       label: 'Ghi chú điều tra',
-      text: 'Phạm Thuỳ Chi không chỉ sở hữu chiếc nhẫn đỏ này mà còn tiếp xúc với người đàn ông đeo chiếc nhẫn tương tự. Chiếc nhẫn đó được nhận dạng là nhẫn của đường dây buôn lậu nhờ thông tin trong bản tin ngày 10/10/2026. Chính vì thế, có thể bước đầu khẳng định rằng Khách sạn Mai Hoa và Phạm Thuỳ Chi có khả năng liên quan đến đường dây buôn lậu thuốc lá điện tử.',
+      text: 'Phạm Thùy Chi không chỉ sở hữu chiếc nhẫn đỏ này mà còn tiếp xúc với người đàn ông đeo chiếc nhẫn tương tự. Chiếc nhẫn đó được nhận dạng là nhẫn của đường dây buôn lậu nhờ thông tin trong bản tin ngày 10/10/2026. Chính vì thế, có thể bước đầu khẳng định rằng Khách sạn Mai Hoa và Phạm Thùy Chi có khả năng liên quan đến đường dây buôn lậu thuốc lá điện tử.',
     },
     backTo: '/p1/o1/q2',
     next: {
-      text: 'Hãy mở phong bì Giai đoạn 2 để truy vết Thủ phạm đã sát hại Phạm Thuỳ Chi',
+      text: 'Hãy mở phong bì Giai đoạn 2 để truy vết Thủ phạm đã sát hại Phạm Thùy Chi',
       label: 'Giai đoạn 2',
       to: '/p1/o2/q1',
     },
   },
   'p1/o2': {
     stage: 'Giai đoạn 2',
-    heading: 'Hung thủ đã sát hại Phạm Thuỳ Chi',
-    conclusion: 'Hai bằng chứng trên đã chứng minh Trần Chi Linh là hung thủ đã sát hại Phạm Thuỳ Chi',
+    heading: 'Hung thủ đã sát hại Phạm Thùy Chi',
+    conclusion: 'Hai bằng chứng trên đã chứng minh Trần Chi Linh là hung thủ đã sát hại Phạm Thùy Chi',
     wall: {
       description:
         'Bức tường bằng chứng: Ảnh hiện trường 1 và Ảnh chụp màn hình điện thoại được nối với nhau. Sợi dây chuyền trong tay nạn nhân và sợi dây chuyền người phụ nữ đeo trên cổ được khoanh đỏ, phóng to bằng kính lúp và nối bằng dây đỏ. Ảnh vật chứng 2 được ghim bên cạnh, vật chứng số 3 là sợi dây chuyền có mặt hình chiếc nhẫn đỏ được khoanh đỏ nhưng không nối.',
@@ -321,10 +322,10 @@ const explanations = {
     // Tờ ghi chú ghim trên bảng: kết luận điều tra
     note: {
       label: 'Kết luận điều tra',
-      text: 'Sợi dây chuyền trong tay Phạm Thuỳ Chi là của Trần Chi Linh. Ngoài ra, ảnh vật chứng cho thấy sợi dây chuyền này có mặt dây chuyền là chiếc nhẫn có kiểu dáng tương tự với nhẫn của Phạm Thuỳ Chi, nên có thể kết luận rằng Trần Chi Linh có khả năng cũng liên quan đến đường dây buôn lậu này.',
+      text: 'Sợi dây chuyền trong tay Phạm Thùy Chi là của Trần Chi Linh. Ngoài ra, ảnh vật chứng cho thấy sợi dây chuyền này có mặt dây chuyền là chiếc nhẫn có kiểu dáng tương tự với nhẫn của Phạm Thùy Chi, nên có thể kết luận rằng Trần Chi Linh có khả năng cũng liên quan đến đường dây buôn lậu này.',
     },
     // Trang cuối của vụ án: nút về Homepage (chưa xây, đang hiện trang "đang xây dựng"; gắn Homepage vào route /trang-chu sau)
-    backTo: '/trang-chu',
+    backTo: '/',
     backLabel: 'Về trang chủ',
     next: {
       text: 'Hãy mở phong bì Giai đoạn 3 để hoàn tất vụ án.',
