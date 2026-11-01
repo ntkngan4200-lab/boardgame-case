@@ -450,7 +450,6 @@
     width: 2.75rem;
     height: 2.75rem;
     flex: none;
-    margin-left: auto;
     border-radius: 3px;
     color: rgb(var(--maroon));
     touch-action: manipulation;

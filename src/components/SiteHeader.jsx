@@ -40,7 +40,7 @@ function SearchForm() {
   }
 
   return (
-    <form role="search" onSubmit={handleSubmit} className="site-search">
+    <form role="search" onSubmit={handleSubmit} className="site-search ml-auto">
       <label htmlFor={inputId} className="sr-only">
         Tìm kiếm
       </label>
@@ -118,7 +118,7 @@ function NavItems({ onNavigate }) {
   })
 }
 
-// Header: Logo · Thanh tìm kiếm · Trang chủ, Về chúng tôi, Hỗ trợ (menu con), Liên hệ
+// Header: Logo bên trái; dồn sang phải: Thanh tìm kiếm · Trang chủ, Về chúng tôi, Hỗ trợ (menu con), Liên hệ
 export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false)
   const panelId = useId()
@@ -131,7 +131,7 @@ export function SiteHeader() {
           <img src={logo} alt="" width="289" height="200" className="h-12 w-auto sm:h-14" />
         </Link>
         <SearchForm />
-        <nav aria-label="Thanh công cụ" className="ml-auto hidden lg:block">
+        <nav aria-label="Thanh công cụ" className="hidden lg:block">
           <ul className="flex items-center gap-1">
             <NavItems onNavigate={closeMenu} />
           </ul>
