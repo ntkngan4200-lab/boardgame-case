@@ -138,7 +138,7 @@ const questions = {
 const falseAnswers = {
   'p1/o1/q1': {
     claim:
-      'Phạm Thuỳ Chi không thực sự đến khách sạn vì lý do này. Hãy chú ý kỹ hơn đến các chi tiết được cung cấp.',
+      'Phạm Thuỳ Chi không thật sự đến khách sạn vì lý do này. Hãy chú ý kỹ hơn đến các chi tiết được cung cấp.',
     hints: ['', '', ''],
   },
   'p1/o1/q2': {
@@ -248,7 +248,7 @@ const explanations = {
     },
     backTo: '/p1/o1/q2',
     next: {
-      text: 'Hãy chuyển trọng tâm điều tra sang truy vết Thủ phạm đã sát hại Phạm Thuỳ Chi',
+      text: 'Hãy mở phong bì Giai đoạn 2 để truy vết Thủ phạm đã sát hại Phạm Thuỳ Chi',
       label: 'Giai đoạn 2',
       to: '/p1/o2/q1',
     },
