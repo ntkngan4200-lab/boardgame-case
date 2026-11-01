@@ -1,0 +1,20 @@
+const encoder = new TextEncoder()
+
+// So đáp án qua hash để người chơi xem source không thấy ngay đáp án đúng.
+// Sắp xếp id trước khi băm để thứ tự chọn không ảnh hưởng kết quả.
+async function sha256Hex(text) {
+  const digest = await crypto.subtle.digest('SHA-256', encoder.encode(text))
+  return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, '0')).join('')
+}
+
+// Số lựa chọn đúng trong các lựa chọn đã chọn (chỉ với câu hỏi có correctOptionHashes)
+export async function countCorrect(question, optionIds) {
+  if (!question.correctOptionHashes) return null
+  const hashes = await Promise.all(optionIds.map((id) => sha256Hex(`${question.id}:${id}`)))
+  return hashes.filter((hash) => question.correctOptionHashes.includes(hash)).length
+}
+
+export async function verifyAnswer(question, optionIds) {
+  const key = `${question.id}:${[...optionIds].sort().join(',')}`
+  return (await sha256Hex(key)) === question.answerHash
+}
