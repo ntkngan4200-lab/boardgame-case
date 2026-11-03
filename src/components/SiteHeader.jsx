@@ -1,7 +1,8 @@
 import { useId, useState } from 'react'
-import { Link, NavLink, useNavigate } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 import logo from '../assets/brand/logo-kinh-lup.webp'
 import { navLinks } from '../data/site'
+import { CaseSearch } from './CaseSearch'
 
 function ChevronIcon() {
   return (
@@ -11,44 +12,11 @@ function ChevronIcon() {
   )
 }
 
-function SearchIcon() {
-  return (
-    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true">
-      <circle cx="10.5" cy="10.5" r="6.5" />
-      <path d="M15.5 15.5L20 20" />
-    </svg>
-  )
-}
-
 function MenuIcon({ open }) {
   return (
     <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true">
       {open ? <path d="M6 6l12 12M18 6L6 18" /> : <path d="M4 7h16M4 12h16M4 17h16" />}
     </svg>
-  )
-}
-
-function SearchForm() {
-  const navigate = useNavigate()
-  const inputId = useId()
-
-  // Chưa có trang kết quả tìm kiếm: tạm đưa tới /tim-kiem (trang đang xây dựng)
-  function handleSubmit(event) {
-    event.preventDefault()
-    const query = String(new FormData(event.currentTarget).get('q') ?? '').trim()
-    navigate(query ? `/tim-kiem?q=${encodeURIComponent(query)}` : '/tim-kiem')
-  }
-
-  return (
-    <form role="search" onSubmit={handleSubmit} className="site-search ml-auto">
-      <label htmlFor={inputId} className="sr-only">
-        Tìm kiếm
-      </label>
-      <input id={inputId} name="q" type="search" placeholder="Tìm kiếm…" autoComplete="off" className="site-search__input" />
-      <button type="submit" className="site-search__button" aria-label="Tìm kiếm">
-        <SearchIcon />
-      </button>
-    </form>
   )
 }
 
@@ -126,7 +94,7 @@ export function SiteHeader() {
 
   return (
     <header className="site-header">
-      <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-2 sm:gap-6 sm:px-8">
+      <div className="mx-auto flex max-w-6xl items-center gap-2 px-4 py-2 sm:gap-6 sm:px-8">
         {/* Bấm logo khi đang ở Trang chủ (đã cuộn xuống) cũng đưa về đầu trang */}
         <Link
           to="/"
@@ -139,7 +107,7 @@ export function SiteHeader() {
         >
           <img src={logo} alt="" width="289" height="200" className="h-12 w-auto sm:h-14" />
         </Link>
-        <SearchForm />
+        <CaseSearch />
         <nav aria-label="Thanh công cụ" className="hidden lg:block">
           <ul className="flex items-center gap-1">
             <NavItems onNavigate={closeMenu} />

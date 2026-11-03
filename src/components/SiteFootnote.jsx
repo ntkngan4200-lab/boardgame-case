@@ -46,7 +46,7 @@ export function SiteFootnote() {
           </FootnoteColumn>
           <FootnoteColumn id="lien-he" title="Liên hệ">
             <li className="footnote-text">
-              Số điện thoại:{' '}
+              Hotline:{' '}
               {contact.phone ? (
                 <a href={`tel:${contact.phone.replace(/\s/g, '')}`} className="footnote-link">
                   {contact.phone}

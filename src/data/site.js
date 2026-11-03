@@ -21,7 +21,7 @@ export const caseLinks = products.filter((product) => !product.comingSoon).map((
 
 // Để trống, điền sau
 export const contact = {
-  phone: '',
+  phone: '0942 655 204',
   email: '',
 }
 
