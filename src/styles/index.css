@@ -773,8 +773,8 @@
     background-color: color-mix(in srgb, rgb(var(--red)) 86%, #000);
   }
 
-  /* ---------- Hướng dẫn chơi: các bước gập/mở ---------- */
-  .guide-step__summary {
+  /* ---------- Mục gập/mở (Hướng dẫn chơi, FAQ's) ---------- */
+  .fold-item__summary {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -785,11 +785,11 @@
     -webkit-tap-highlight-color: transparent;
   }
 
-  .guide-step__summary::-webkit-details-marker {
+  .fold-item__summary::-webkit-details-marker {
     display: none;
   }
 
-  .guide-step__number {
+  .fold-item__label {
     display: block;
     font-family: 'JetBrains Mono', ui-monospace, monospace;
     font-size: 0.8rem;
@@ -799,7 +799,7 @@
     color: rgb(var(--red));
   }
 
-  .guide-step__title {
+  .fold-item__title {
     display: block;
     margin-top: 0.3rem;
     font-family: Anton, Impact, sans-serif;
@@ -809,11 +809,11 @@
     text-wrap: balance;
   }
 
-  .guide-step__summary:hover .guide-step__title {
+  .fold-item__summary:hover .fold-item__title {
     color: rgb(var(--red));
   }
 
-  .guide-step__chevron {
+  .fold-item__chevron {
     display: grid;
     flex: none;
     place-items: center;
@@ -823,12 +823,12 @@
     border-radius: 9999px;
   }
 
-  .guide-step__summary:hover .guide-step__chevron {
+  .fold-item__summary:hover .fold-item__chevron {
     background-color: rgb(var(--maroon));
     color: rgb(var(--cream));
   }
 
-  .guide-step[open] .guide-step__chevron svg {
+  .fold-item[open] .fold-item__chevron svg {
     rotate: 180deg;
   }
 

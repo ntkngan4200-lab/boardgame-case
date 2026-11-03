@@ -4,6 +4,7 @@ import { SiteLayout } from './layouts/SiteLayout'
 import { AccessPage } from './pages/AccessPage'
 import { ComingSoonPage } from './pages/ComingSoonPage'
 import { DocRequestPage } from './pages/DocRequestPage'
+import { FaqPage } from './pages/FaqPage'
 import { GuidePage } from './pages/GuidePage'
 import { HomePage } from './pages/HomePage'
 import { MissingDocsPage } from './pages/MissingDocsPage'
@@ -17,6 +18,7 @@ export default function App() {
       <Route element={<SiteLayout />}>
         <Route index element={<HomePage />} />
         <Route path="ho-tro/huong-dan-choi" element={<GuidePage />} />
+        <Route path="ho-tro/faq" element={<FaqPage />} />
         <Route path="ho-tro/ho-so" element={<MissingDocsPage />} />
         <Route path="ho-tro/ho-so/:productId" element={<DocRequestPage />} />
         <Route path=":productId/truy-cap" element={<AccessPage />} />

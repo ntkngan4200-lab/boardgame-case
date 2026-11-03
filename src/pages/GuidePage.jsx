@@ -1,8 +1,8 @@
-import { Fragment } from 'react'
 import { Link } from 'react-router-dom'
 import mascot from '../assets/brand/mascot.webp'
 import { BuyButton } from '../components/BuyButton'
 import { CaseBand } from '../components/CaseBand'
+import { FoldList } from '../components/FoldList'
 import { guideDocuments, guideImages } from '../data/guide'
 
 function GuideImage({ image, className = '' }) {
@@ -15,43 +15,6 @@ function GuideImage({ image, className = '' }) {
       loading="lazy"
       className={`guide-paper ${className}`}
     />
-  )
-}
-
-// Nét cọ ngăn cách các bước (vẽ tay như reference)
-function BrushDivider() {
-  return (
-    <svg aria-hidden="true" viewBox="0 0 640 16" preserveAspectRatio="none" className="brush-divider">
-      <path d="M3 10.6c58-3.3 132-4.7 214-5.2 96-.6 189-1.5 292-3.1 43-.7 85-1 128-.9l-.5 3.4c-52 1.4-109 2.7-171 3.7-101 1.6-196 2.6-286 3.9-61 .9-118 1.6-176 2.2z" />
-      <path d="M48 13.6c96-1.4 214-2.6 352-4.1M470 7.4c52-.8 101-1.4 150-2" fill="none" stroke="currentColor" strokeWidth="1.1" />
-    </svg>
-  )
-}
-
-function ChevronIcon() {
-  return (
-    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M5 9l7 7 7-7" />
-    </svg>
-  )
-}
-
-// Mỗi bước: chỉ hiện tiêu đề + mũi tên; bấm tiêu đề hoặc mũi tên để mở nội dung (không hiệu ứng)
-function GuideStep({ number, title, children }) {
-  return (
-    <details className="guide-step">
-      <summary className="guide-step__summary">
-        <h2 className="min-w-0">
-          <span className="guide-step__number">Bước {number}</span>
-          <span className="sr-only">: </span>
-          <span className="guide-step__title">{title}</span>
-        </h2>
-        <span className="guide-step__chevron">
-          <ChevronIcon />
-        </span>
-      </summary>
-      <div className="support-copy pb-8 pt-2 sm:pb-10">{children}</div>
-    </details>
   )
 }
 
@@ -153,18 +116,7 @@ export function GuidePage() {
       <title>Hướng dẫn chơi · Hỗ trợ · Kính Lúp</title>
       <CaseBand stage="Hỗ trợ" heading="Hướng dẫn chơi" />
 
-      <section className="px-4 pt-12 sm:px-8 sm:pt-16">
-        <div className="answer-sheet mx-auto max-w-5xl px-5 py-4 sm:px-12 sm:py-8">
-          {steps.map((step, index) => (
-            <Fragment key={step.title}>
-              {index > 0 ? <BrushDivider /> : null}
-              <GuideStep number={index + 1} title={step.title}>
-                {step.body}
-              </GuideStep>
-            </Fragment>
-          ))}
-        </div>
-      </section>
+      <FoldList items={steps.map((step, index) => ({ ...step, label: `Bước ${index + 1}` }))} />
 
       <div className="flex justify-center px-4 pb-20 pt-12 sm:pt-14">
         <BuyButton />
