@@ -1,7 +1,8 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 
-function ProductCard({ product }) {
+// to / className: cho phép dùng lại thẻ ở nơi khác (vd. lưới vụ án ở trang Hỗ trợ › Hồ sơ)
+export function ProductCard({ product, to = product.to, className = 'product-card' }) {
   const poster = (
     <div className="product-card__poster">
       <img src={product.poster} alt="" width="900" height="900" loading="lazy" draggable="false" />
@@ -11,9 +12,9 @@ function ProductCard({ product }) {
 
   return (
     // data-featured: thẻ được căn giữa khi mở trang
-    <li className="product-card" data-featured={product.featured ? 'true' : undefined}>
-      {product.to ? (
-        <Link to={product.to} className="product-card__link">
+    <li className={className} data-featured={product.featured ? 'true' : undefined}>
+      {to ? (
+        <Link to={to} className="product-card__link">
           {poster}
           <span className="product-card__title">{product.title}</span>
         </Link>

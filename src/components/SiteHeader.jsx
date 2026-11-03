@@ -127,7 +127,16 @@ export function SiteHeader() {
   return (
     <header className="site-header">
       <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-2 sm:gap-6 sm:px-8">
-        <Link to="/" className="shrink-0" aria-label="Kính Lúp – Trang chủ" onClick={closeMenu}>
+        {/* Bấm logo khi đang ở Trang chủ (đã cuộn xuống) cũng đưa về đầu trang */}
+        <Link
+          to="/"
+          className="shrink-0"
+          aria-label="Kính Lúp – Trang chủ"
+          onClick={() => {
+            closeMenu()
+            window.scrollTo(0, 0)
+          }}
+        >
           <img src={logo} alt="" width="289" height="200" className="h-12 w-auto sm:h-14" />
         </Link>
         <SearchForm />

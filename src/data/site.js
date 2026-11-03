@@ -4,7 +4,7 @@ import { products } from './home'
 // Mục "Hỗ trợ": dùng chung cho menu sổ xuống ở Header và cột Hỗ trợ ở Footnote
 export const supportLinks = [
   { label: 'Hướng dẫn chơi', to: '/ho-tro/huong-dan-choi' },
-  { label: 'Tài liệu', to: '/ho-tro/tai-lieu' },
+  { label: 'Hồ sơ', to: '/ho-tro/ho-so' },
   { label: "FAQ's", to: '/ho-tro/faq' },
 ]
 

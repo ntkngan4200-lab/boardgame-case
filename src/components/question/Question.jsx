@@ -96,11 +96,11 @@ function QuestionOption({ option }) {
 function QuestionConfirm() {
   const {
     state: { selectedIds, status },
-    meta: { question, pick },
+    meta: { question, pick, minPick },
   } = useQuestion()
   const messageId = useId()
   const isChecking = status === 'checking'
-  const unit = pick === 1 ? 'một lựa chọn' : `đủ ${pick} tài liệu`
+  const unit = question.pickUnit ?? (pick === 1 ? 'một lựa chọn' : `đủ ${pick} hồ sơ`)
 
   return (
     <div className="mt-6 border-t border-maroon/20 pt-6">
@@ -117,7 +117,9 @@ function QuestionConfirm() {
           className="mb-3 w-full text-center text-sm font-semibold text-maroon empty:hidden"
         >
           {status === 'missing' ? `Hãy chọn ${unit} trước khi xác nhận.` : ''}
-          {status === 'limit' ? `Chỉ được chọn ${pick} tài liệu. Bỏ dấu X ở một ô trước khi chọn ô khác.` : ''}
+          {status === 'limit'
+            ? `Chỉ được chọn ${minPick < pick ? 'tối đa ' : ''}${pick} hồ sơ. Bỏ dấu X ở một ô trước khi chọn ô khác.`
+            : ''}
           {isChecking ? 'Đang kiểm tra…' : ''}
         </p>
       </div>

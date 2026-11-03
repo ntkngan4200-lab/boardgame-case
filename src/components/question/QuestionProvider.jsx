@@ -6,6 +6,8 @@ const QuestionContext = createContext(null)
 export function QuestionProvider({ question, onAnswer, children }) {
   const titleId = useId()
   const pick = question.pick ?? 1
+  // minPick < pick: chọn từ minPick tới pick lựa chọn (vd. 1–2 hồ sơ); mặc định phải chọn đủ pick
+  const minPick = question.minPick ?? pick
   const [selectedIds, setSelectedIds] = useState([])
   const [status, setStatus] = useState('idle') // 'idle' | 'missing' | 'limit' | 'checking'
 
@@ -25,20 +27,20 @@ export function QuestionProvider({ question, onAnswer, children }) {
 
   async function submit() {
     if (status === 'checking') return
-    if (selectedIds.length !== pick) {
+    if (selectedIds.length < minPick) {
       setStatus('missing')
       return
     }
 
     setStatus('checking')
     try {
-      const [isCorrect, correctCount] = await Promise.all([
-        verifyAnswer(question, selectedIds),
-        countCorrect(question, selectedIds),
-      ])
-      onAnswer({ optionIds: selectedIds, isCorrect, correctCount })
+      // Câu hỏi không có đáp án đúng (vd. phiếu yêu cầu hồ sơ) thì chỉ trả về lựa chọn
+      const [isCorrect, correctCount] = question.answerHash
+        ? await Promise.all([verifyAnswer(question, selectedIds), countCorrect(question, selectedIds)])
+        : [null, null]
+      await onAnswer({ optionIds: selectedIds, isCorrect, correctCount })
     } catch (error) {
-      console.error('[Kính Lúp] Không kiểm tra được đáp án', error)
+      console.error('[Kính Lúp] Không xử lý được lựa chọn', error)
       setStatus('idle')
     }
   }
@@ -46,7 +48,7 @@ export function QuestionProvider({ question, onAnswer, children }) {
   const value = {
     state: { selectedIds, status },
     actions: { toggle, submit },
-    meta: { question, pick, titleId },
+    meta: { question, pick, minPick, titleId },
   }
 
   return <QuestionContext value={value}>{children}</QuestionContext>

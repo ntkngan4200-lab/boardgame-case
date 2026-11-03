@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 
-// Trang chờ cho các bước chưa xây (Câu hỏi 2, False Answer Page, …)
+// Trang chờ cho các đường dẫn chưa xây (Về chúng tôi, FAQ's, Tìm kiếm, …)
 export function ComingSoonPage() {
   return (
     <section className="px-4 py-20 sm:px-8">

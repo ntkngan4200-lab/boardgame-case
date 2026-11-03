@@ -14,7 +14,7 @@ import vatChungImage from '../assets/evidence/vat-chung.jpg'
 
 // "Danh mục tài liệu" (Drive › Web) — STT = vị trí trong danh sách
 const caseDocuments = [
-  'Danh mục tài liệu và vật chứng vụ án',
+  'Danh mục hồ sơ và vật chứng vụ án',
   'Chân dung nạn nhân Phạm Thùy Chi',
   'Bản tin ngày 10/10/2026',
   'Kết luận Giám định Tử thi',
@@ -48,7 +48,7 @@ const caseDocuments = [
   'Biên bản Hỏi cung Bị can - Trần Chi Linh',
 ]
 
-// Tài liệu người chơi có trong tay tới STT maxNumber (mỗi giai đoạn mở thêm tài liệu)
+// Hồ sơ người chơi có trong tay tới STT maxNumber (mỗi giai đoạn mở thêm hồ sơ)
 function documentOptions(maxNumber) {
   return caseDocuments.slice(0, maxNumber).map((label, index) => ({
     id: `tl-${String(index + 1).padStart(2, '0')}`,
@@ -56,6 +56,9 @@ function documentOptions(maxNumber) {
     label,
   }))
 }
+
+// Toàn bộ Danh mục hồ sơ (trang Hỗ trợ › Hồ sơ)
+export const caseDocumentOptions = documentOptions(caseDocuments.length)
 
 const questions = {
   'p1/o1/q1': {
@@ -324,7 +327,7 @@ const explanations = {
       label: 'Kết luận điều tra',
       text: 'Sợi dây chuyền trong tay Phạm Thùy Chi là của Trần Chi Linh. Ngoài ra, ảnh vật chứng cho thấy sợi dây chuyền này có mặt dây chuyền là chiếc nhẫn có kiểu dáng tương tự với nhẫn của Phạm Thùy Chi, nên có thể kết luận rằng Trần Chi Linh có khả năng cũng liên quan đến đường dây buôn lậu này.',
     },
-    // Trang cuối của vụ án: nút về Homepage (chưa xây, đang hiện trang "đang xây dựng"; gắn Homepage vào route /trang-chu sau)
+    // Trang cuối của vụ án: nút về Trang chủ
     backTo: '/',
     backLabel: 'Về trang chủ',
     next: {

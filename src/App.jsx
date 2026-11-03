@@ -1,10 +1,12 @@
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
 import { RequireAccess } from './components/RequireAccess'
 import { SiteLayout } from './layouts/SiteLayout'
 import { AccessPage } from './pages/AccessPage'
 import { ComingSoonPage } from './pages/ComingSoonPage'
-import { CoverPage } from './pages/CoverPage'
+import { DocRequestPage } from './pages/DocRequestPage'
+import { GuidePage } from './pages/GuidePage'
 import { HomePage } from './pages/HomePage'
+import { MissingDocsPage } from './pages/MissingDocsPage'
 import { ExplanationPage } from './pages/ExplanationPage'
 import { FalseAnswerPage } from './pages/FalseAnswerPage'
 import { QuestionPage } from './pages/QuestionPage'
@@ -14,8 +16,9 @@ export default function App() {
     <Routes>
       <Route element={<SiteLayout />}>
         <Route index element={<HomePage />} />
-        <Route path="trang-chu" element={<Navigate to="/" replace />} />
-        <Route path="bia" element={<CoverPage />} />
+        <Route path="ho-tro/huong-dan-choi" element={<GuidePage />} />
+        <Route path="ho-tro/ho-so" element={<MissingDocsPage />} />
+        <Route path="ho-tro/ho-so/:productId" element={<DocRequestPage />} />
         <Route path=":productId/truy-cap" element={<AccessPage />} />
         {/* Các trang chơi chỉ mở sau khi nhập đúng mã truy cập */}
         <Route element={<RequireAccess />}>
