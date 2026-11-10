@@ -10,7 +10,7 @@ import vatChungImage from '../assets/evidence/vat-chung.jpg'
 // answerHash = SHA-256 của "<id>:<các optionId đúng, sắp xếp, nối bằng dấu phẩy>", tạo bằng:
 //   printf '%s' 'p1-o1-q1:buon-lau' | shasum -a 256
 //   printf '%s' 'p1-o1-q2:tl-03,tl-22,tl-26' | shasum -a 256
-//   printf '%s' 'p1-o2-q2:tl-23,tl-30' | shasum -a 256
+//   printf '%s' 'p1-o2-q2:tl-23,tl-30' | shasum -a 256   (cặp thứ hai: 'p1-o2-q2:tl-22,tl-30')
 
 // "Danh mục tài liệu" (Drive › Web) — STT = vị trí trong danh sách
 const caseDocuments = [
@@ -20,7 +20,7 @@ const caseDocuments = [
   'Kết luận Giám định Tử thi',
   'Bản vẽ Mặt bằng Khách sạn Mai Hoa',
   'Biên bản Khám nghiệm Hiện trường',
-  'Ảnh người làm chứng - Lê Văn Út',
+  'Ảnh nhân chứng - Lê Văn Út',
   'Ảnh nhận dạng nghi phạm - Vũ Văn Dũng',
   'Ảnh nhận dạng nghi phạm - Bành Thu Cúc',
   'Ảnh nhận dạng nghi phạm - Trần Trung Đức',
@@ -33,7 +33,7 @@ const caseDocuments = [
   'Biên bản Lời khai - Bành Thu Cúc',
   'Biên bản Lời khai - Trần Trung Đức',
   'Biên bản Lời khai - Trần Chi Linh',
-  'Biên bản Lời khai Người làm chứng - Lê Văn Út',
+  'Biên bản Lời khai Nhân chứng - Lê Văn Út',
   'Ảnh vật chứng 1 - Bài thơ Trần Trung Đức viết cho Phạm Thùy Chi',
   'Ảnh vật chứng 2 - Vật chứng thu giữ tại hiện trường',
   'Ảnh hiện trường 1 - Thi thể nạn nhân Phạm Thùy Chi',
@@ -125,8 +125,13 @@ const questions = {
     prompt: 'Hai bằng chứng nào có thể chứng minh Trần Chi Linh là hung thủ sát hại Phạm Thùy Chi?',
     pick: 2,
     options: documentOptions(30),
-    answerHash: 'e4151bd00948035a6efd84800a72165b032573ffe38fb648d9226dc9b943fbfd',
+    // Hai cặp đáp án đúng: tl-23 + tl-30 (Ảnh hiện trường 1 + Ảnh chụp màn hình) hoặc tl-22 + tl-30 (Ảnh vật chứng 2 + Ảnh chụp màn hình)
+    answerHashes: [
+      'e4151bd00948035a6efd84800a72165b032573ffe38fb648d9226dc9b943fbfd',
+      '4cfef2a2a50354e1952529223515ea056ec3bb6ea79bb76c75aa59417ea93885',
+    ],
     correctOptionHashes: [
+      '8fd5241afdaaaf207f2429b0188ab9f1ad701f03ebed9bdca7b741bf934e8ad5',
       'c1481ba887bea9eee54f0854bcf2bbadbe95b1bdb0fe57d5c71508813346c30e',
       'e22e8cd2e430d08619f2fb7d604443619d31ce17b53db692a38d52decd00770d',
     ],
@@ -138,31 +143,31 @@ const questions = {
 }
 
 // False Answer Page của từng câu hỏi (cùng key với câu hỏi).
-// hints: điền nội dung sau — mỗi lần bấm "Gợi ý" mở thêm 1 mục theo thứ tự.
+// hints: [] = không có gợi ý (ẩn nút Gợi ý); điền nội dung sau — mỗi lần bấm "Gợi ý" mở thêm 1 mục theo thứ tự.
 const falseAnswers = {
   'p1/o1/q1': {
     claim:
       'Phạm Thùy Chi không thật sự đến khách sạn vì lý do này. Hãy chú ý kỹ hơn đến các chi tiết được cung cấp.',
-    hints: ['', '', ''],
+    hints: [],
   },
   'p1/o1/q2': {
     // Chọn theo số bằng chứng đúng; không biết số (mở trực tiếp trang) thì dùng "default"
     claims: {
       0: 'Chưa có bằng chứng nào được chọn chứng minh trực tiếp mục đích Phạm Thùy Chi đến Khách sạn Mai Hoa. Hãy chú ý kỹ hơn đến các chi tiết được cung cấp.',
-      1: 'Chỉ một trong ba bằng chứng được chọn chứng minh trực tiếp mục đích Phạm Thùy Chi đến Khách sạn Mai Hoa. Hãy chú ý kỹ hơn đến các chi tiết được cung cấp.',
-      2: 'Chỉ hai trong ba bằng chứng được chọn chứng minh trực tiếp mục đích Phạm Thùy Chi đến Khách sạn Mai Hoa. Hãy chú ý kỹ hơn đến các chi tiết được cung cấp.',
+      1: 'Chỉ 1/3 bằng chứng được chọn chứng minh trực tiếp mục đích Phạm Thùy Chi đến Khách sạn Mai Hoa. Hãy chú ý kỹ hơn đến các chi tiết được cung cấp.',
+      2: 'Chỉ 2/3 bằng chứng được chọn chứng minh trực tiếp mục đích Phạm Thùy Chi đến Khách sạn Mai Hoa. Hãy chú ý kỹ hơn đến các chi tiết được cung cấp.',
       default: 'Hãy chú ý kỹ hơn đến các chi tiết được cung cấp.',
     },
     hints: ['', '', ''],
   },
   'p1/o2/q1': {
     claim: 'Người này không phải là hung thủ đã sát hại Phạm Thùy Chi. Hãy chú ý kỹ hơn đến các chi tiết được cung cấp.',
-    hints: ['', ''],
+    hints: [],
   },
   'p1/o2/q2': {
     claims: {
       0: 'Chưa có bằng chứng nào được chọn chứng minh trực tiếp Trần Chi Linh là hung thủ đã sát hại Phạm Thùy Chi. Hãy chú ý kỹ hơn đến các chi tiết được cung cấp.',
-      1: 'Chỉ một trong hai bằng chứng được chọn chứng minh trực tiếp Trần Chi Linh là hung thủ đã sát hại Phạm Thùy Chi. Hãy chú ý kỹ hơn đến các chi tiết được cung cấp.',
+      1: 'Chỉ 1/2 bằng chứng được chọn chứng minh trực tiếp Trần Chi Linh là hung thủ đã sát hại Phạm Thùy Chi. Hãy chú ý kỹ hơn đến các chi tiết được cung cấp.',
       default: 'Hãy chú ý kỹ hơn đến các chi tiết được cung cấp.',
     },
     hints: ['', ''],
@@ -263,7 +268,7 @@ const explanations = {
     conclusion: 'Hai bằng chứng trên đã chứng minh Trần Chi Linh là hung thủ đã sát hại Phạm Thùy Chi',
     wall: {
       description:
-        'Bức tường bằng chứng: Ảnh hiện trường 1 và Ảnh chụp màn hình điện thoại được nối với nhau. Sợi dây chuyền trong tay nạn nhân và sợi dây chuyền người phụ nữ đeo trên cổ được khoanh đỏ, phóng to bằng kính lúp và nối bằng dây đỏ. Ảnh vật chứng 2 được ghim bên cạnh, vật chứng số 3 là sợi dây chuyền có mặt hình chiếc nhẫn đỏ được khoanh đỏ nhưng không nối.',
+        'Bức tường bằng chứng: Ảnh hiện trường 1, Ảnh chụp màn hình điện thoại và Ảnh vật chứng 2. Sợi dây chuyền trong tay nạn nhân và sợi dây chuyền người phụ nữ đeo trên cổ được khoanh đỏ, nối bằng dây đỏ với nhau và với vật chứng số 3 là sợi dây chuyền có mặt hình chiếc nhẫn đỏ.',
       items: [
         {
           id: 'nan-nhan',
@@ -276,10 +281,11 @@ const explanations = {
         {
           id: 'gg-maps',
           src: ggMapsImage,
-          ratio: 1000 / 963,
+          ratio: 1080 / 1920,
           frame: 'polaroid',
           caption: 'Ảnh chụp màn hình điện thoại',
-          marks: [{ id: 'day-chuyen-le-tan', u: 0.754, v: 0.834, r: 0.04, ring: 0.03, lensAngle: 180, handleAngle: -120 }],
+          // Kính lúp đặt dưới bên phải người phụ nữ, ra ngoài ảnh để không che dây chuyền; ring nhỏ = phóng to hơn
+          marks: [{ id: 'day-chuyen-le-tan', u: 0.747, v: 0.552, r: 0.06, ring: 0.02, lensAngle: 60, handleAngle: 50 }],
         },
         {
           id: 'vat-chung',
@@ -287,28 +293,32 @@ const explanations = {
           ratio: 4 / 3,
           frame: 'polaroid',
           caption: 'Ảnh vật chứng 2',
-          marks: [{ id: 'day-chuyen-vat-chung', u: 0.293, v: 0.827, r: 0.05 }],
+          marks: [{ id: 'day-chuyen-vat-chung', u: 0.293, v: 0.827, r: 0.05, circle: false }],
         },
       ],
-      strings: [['day-chuyen-nan-nhan', 'day-chuyen-le-tan']],
+      strings: [
+        ['day-chuyen-nan-nhan', 'day-chuyen-le-tan'],
+        ['day-chuyen-nan-nhan', 'day-chuyen-vat-chung'],
+        ['day-chuyen-le-tan', 'day-chuyen-vat-chung'],
+      ],
       layouts: {
         wide: {
           width: 1000,
-          height: 760,
+          height: 820,
           captionSize: 14,
           strokeWidth: 2.4,
           minMarkRadius: 14,
           lensRadius: 46,
           lensGap: 30,
           place: {
-            'nan-nhan': { x: 70, y: 70, w: 440, rotate: -2.5 },
-            'gg-maps': { x: 620, y: 56, w: 290, rotate: 3 },
-            'vat-chung': { x: 340, y: 450, w: 320, rotate: -1.5 },
+            'nan-nhan': { x: 60, y: 50, w: 500, rotate: -2 },
+            'gg-maps': { x: 635, y: 75, w: 300, rotate: 2 },
+            'vat-chung': { x: 115, y: 440, w: 420, rotate: -1.5 },
           },
         },
         tall: {
           width: 600,
-          height: 1460,
+          height: 1540,
           captionSize: 19,
           strokeWidth: 3,
           minMarkRadius: 16,
@@ -316,8 +326,9 @@ const explanations = {
           lensGap: 34,
           place: {
             'nan-nhan': { x: 40, y: 56, w: 520, rotate: -1.5 },
-            'gg-maps': { x: 130, y: 580, w: 400, rotate: 2 },
-            'vat-chung': { x: 70, y: 1090, w: 400, rotate: -3 },
+            'vat-chung': { x: 150, y: 480, w: 420, rotate: 2 },
+            // Kính lúp sang phải, ra ngoài ảnh để dây đỏ đi từ trên xuống không cắt qua người phụ nữ
+            'gg-maps': { x: 80, y: 920, w: 300, rotate: -1.5, marks: { 'day-chuyen-le-tan': { lensAngle: 0, handleAngle: 30 } } },
           },
         },
       },
@@ -325,7 +336,7 @@ const explanations = {
     // Tờ ghi chú ghim trên bảng: kết luận điều tra
     note: {
       label: 'Kết luận điều tra',
-      text: 'Sợi dây chuyền trong tay Phạm Thùy Chi là của Trần Chi Linh. Ngoài ra, ảnh vật chứng cho thấy sợi dây chuyền này có mặt dây chuyền là chiếc nhẫn có kiểu dáng tương tự với nhẫn của Phạm Thùy Chi, nên có thể kết luận rằng Trần Chi Linh có khả năng cũng liên quan đến đường dây buôn lậu này.',
+      text: 'Quá trình điều tra và đối chiếu các vật chứng thu thập được tại hiện trường đã xác định sợi dây chuyền do Phạm Thùy Chi nắm trong tay tại thời điểm rơi từ ban công thuộc sở hữu của Trần Chi Linh. Sự hiện diện của sợi dây chuyền này tại hiện trường là căn cứ quan trọng để xác định Trần Chi Linh chính là người đã tiếp xúc và gặp nạn nhân lần cuối trước khi xảy ra sự việc. Từ những tình tiết và chứng cứ thu thập được, cơ quan điều tra nhận định Trần Chi Linh là đối tượng cần được làm rõ, do đó tiến hành bắt giữ và lấy lời khai nhằm xác minh vai trò, mức độ liên quan của đối tượng, đồng thời làm sáng tỏ toàn bộ diễn biến vụ việc.',
     },
     // Trang cuối của vụ án: nút về Trang chủ
     backTo: '/',

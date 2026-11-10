@@ -30,7 +30,7 @@ export function FalseAnswerPage() {
             <Link to={backTo} className="pill-button">
               Trở lại
             </Link>
-            <Hints.Trigger />
+            {hints.length > 0 ? <Hints.Trigger /> : null}
           </div>
 
           <div className="mx-auto max-w-2xl">

@@ -35,7 +35,7 @@ export function QuestionProvider({ question, onAnswer, children }) {
     setStatus('checking')
     try {
       // Câu hỏi không có đáp án đúng (vd. phiếu yêu cầu hồ sơ) thì chỉ trả về lựa chọn
-      const [isCorrect, correctCount] = question.answerHash
+      const [isCorrect, correctCount] = question.answerHash || question.answerHashes
         ? await Promise.all([verifyAnswer(question, selectedIds), countCorrect(question, selectedIds)])
         : [null, null]
       await onAnswer({ optionIds: selectedIds, isCorrect, correctCount })

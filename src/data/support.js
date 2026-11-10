@@ -6,11 +6,11 @@ const docRequestCases = {
   p1: {
     productId: 'p1',
     title: 'Phạm Thùy Chi',
-    // Mỗi lần yêu cầu ít nhất 1, tối đa 2 hồ sơ
+    // Mỗi lần yêu cầu ít nhất 1, tối đa 3 hồ sơ
     question: {
       id: 'ho-so-p1',
       minPick: 1,
-      pick: 2,
+      pick: 3,
       pickUnit: 'ít nhất một hồ sơ',
       options: caseDocumentOptions,
       backTo: '/ho-tro/ho-so',

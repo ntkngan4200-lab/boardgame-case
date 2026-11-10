@@ -107,14 +107,17 @@ function WallBoard({ wall, layout, className }) {
           <g key={item.id} transform={item.transform}>
             {item.marks.map((mark) => (
               <g key={mark.id}>
-                <path
-                  d={scribbleCircle(mark.x, mark.y, mark.r, mark.seed)}
-                  fill="none"
-                  stroke={RED}
-                  strokeWidth={layout.strokeWidth}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
+                {/* circle: false — không khoanh, chỉ giữ điểm ghim dây cạnh chi tiết */}
+                {mark.circle === false ? null : (
+                  <path
+                    d={scribbleCircle(mark.x, mark.y, mark.r, mark.seed)}
+                    fill="none"
+                    stroke={RED}
+                    strokeWidth={layout.strokeWidth}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                )}
                 {mark.lens ? <Magnifier uid={uid} item={item} mark={mark} /> : null}
               </g>
             ))}
@@ -262,14 +265,16 @@ function placeItem(item, layout) {
   placed.cx = placed.frameX + placed.frameW / 2
   placed.cy = placed.frameY + placed.frameH / 2
   placed.transform = `rotate(${place.rotate} ${placed.cx} ${placed.cy})`
-  placed.marks = item.marks.map((mark, index) => {
+  // place.marks[id] cho phép bố cục đổi hướng kính lúp riêng (vd. lensAngle khác giữa wide và tall)
+  placed.marks = item.marks.map((baseMark, index) => {
+    const mark = { ...baseMark, ...place.marks?.[baseMark.id] }
     const x = place.x + mark.u * w
     const y = place.y + mark.v * h
     const r = Math.max(mark.r * w, layout.minMarkRadius)
     // Không có lensAngle: chi tiết đủ rõ, dây nối thẳng vào vòng khoanh
     if (mark.lensAngle === undefined) {
       const [gx, gy] = rotatePoint(x, y, placed)
-      return { id: mark.id, x, y, r, lens: null, seed: index + w, globalLens: { x: gx, y: gy, r } }
+      return { id: mark.id, x, y, r, circle: mark.circle, lens: null, seed: index + w, globalLens: { x: gx, y: gy, r } }
     }
     const lensR = layout.lensRadius
     const angle = (mark.lensAngle * Math.PI) / 180

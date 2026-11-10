@@ -23,7 +23,7 @@ export function MissingDocsPage() {
             nhé.
           </p>
           <p>
-            <strong>Lưu ý nhỏ:</strong> nếu vụ án có từ 2 hồ sơ trở lên bị thiếu hoặc hư hỏng, bạn hãy nhắn trực
+            <strong>Lưu ý nhỏ:</strong> nếu vụ án có từ 3 hồ sơ trở lên bị thiếu hoặc hư hỏng, bạn hãy nhắn trực
             tiếp cho Kính Lúp để được hỗ trợ nhận lại bộ hồ sơ hoàn chỉnh hơn.
           </p>
           <p>

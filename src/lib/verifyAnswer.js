@@ -14,9 +14,11 @@ export async function countCorrect(question, optionIds) {
   return hashes.filter((hash) => question.correctOptionHashes.includes(hash)).length
 }
 
+// Câu hỏi có nhiều cặp đáp án đúng thì dùng answerHashes (mảng); chỉ một đáp án thì dùng answerHash
 export async function verifyAnswer(question, optionIds) {
   const key = `${question.id}:${[...optionIds].sort().join(',')}`
-  return (await sha256Hex(key)) === question.answerHash
+  const hash = await sha256Hex(key)
+  return (question.answerHashes ?? [question.answerHash]).includes(hash)
 }
 
 // Mã truy cập: bỏ khoảng trắng, không phân biệt hoa thường
