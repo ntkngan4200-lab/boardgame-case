@@ -143,7 +143,7 @@ const questions = {
 }
 
 // False Answer Page của từng câu hỏi (cùng key với câu hỏi).
-// hints: [] = không có gợi ý (ẩn nút Gợi ý); điền nội dung sau — mỗi lần bấm "Gợi ý" mở thêm 1 mục theo thứ tự.
+// hints: [] = không có gợi ý (ẩn nút Gợi ý); mỗi lần bấm "Gợi ý" mở thêm 1 mục theo thứ tự.
 const falseAnswers = {
   'p1/o1/q1': {
     claim:
@@ -158,7 +158,11 @@ const falseAnswers = {
       2: 'Chỉ 2/3 bằng chứng được chọn chứng minh trực tiếp mục đích Phạm Thùy Chi đến Khách sạn Mai Hoa. Hãy chú ý kỹ hơn đến các chi tiết được cung cấp.',
       default: 'Hãy chú ý kỹ hơn đến các chi tiết được cung cấp.',
     },
-    hints: ['', '', ''],
+    hints: [
+      'Vật chứng thu giữ tại hiện trường có điểm gì bất thường?',
+      'Tại sao Phạm Thùy Chi phải giữ một chiếc nhẫn bên trong túi váy?',
+      'Chiếc nhẫn Phạm Thùy Chi cất giữ đã từng được bắt gặp ở đâu?',
+    ],
   },
   'p1/o2/q1': {
     claim: 'Người này không phải là hung thủ đã sát hại Phạm Thùy Chi. Hãy chú ý kỹ hơn đến các chi tiết được cung cấp.',
@@ -170,7 +174,10 @@ const falseAnswers = {
       1: 'Chỉ 1/2 bằng chứng được chọn chứng minh trực tiếp Trần Chi Linh là hung thủ đã sát hại Phạm Thùy Chi. Hãy chú ý kỹ hơn đến các chi tiết được cung cấp.',
       default: 'Hãy chú ý kỹ hơn đến các chi tiết được cung cấp.',
     },
-    hints: ['', ''],
+    hints: [
+      'Ai là người có nhiều khả năng đã gặp nạn nhân cuối cùng?',
+      'Tại sao Phạm Thùy Chi phải nắm chặt sợi dây chuyền trong giờ phút cuối cùng?',
+    ],
   },
 }
 
