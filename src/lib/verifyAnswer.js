@@ -21,8 +21,23 @@ export async function verifyAnswer(question, optionIds) {
   return (question.answerHashes ?? [question.answerHash]).includes(hash)
 }
 
-// Mã truy cập: bỏ khoảng trắng, không phân biệt hoa thường
+// Mã admin: thử mọi tổ hợp đủ số pick (vài nghìn lần băm) để tìm đáp án đúng và điền sẵn
+export async function findCorrectAnswer(question) {
+  const ids = question.options.map((option) => option.id)
+  const combos = []
+  const build = (start, chosen) => {
+    if (chosen.length === (question.pick ?? 1)) return void combos.push(chosen)
+    for (let index = start; index < ids.length; index++) build(index + 1, [...chosen, ids[index]])
+  }
+  build(0, [])
+  const results = await Promise.all(combos.map((combo) => verifyAnswer(question, combo)))
+  return combos[results.indexOf(true)] ?? []
+}
+
+// Mã truy cập: bỏ khoảng trắng, không phân biệt hoa thường. Trả về { code, admin } hoặc null nếu sai.
 export async function verifyAccessCode(access, code) {
   const normalized = code.trim().toUpperCase()
-  return access.codeHashes.includes(await sha256Hex(`${access.productId}:${normalized}`))
+  const hash = await sha256Hex(`${access.productId}:${normalized}`)
+  if (hash === access.adminCodeHash) return { code: normalized, admin: true }
+  return access.codeHashes.includes(hash) ? { code: normalized, admin: false } : null
 }

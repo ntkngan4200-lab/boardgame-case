@@ -1,15 +1,23 @@
+import { useEffect } from 'react'
 import { Link, Outlet, useLocation, useParams } from 'react-router-dom'
 import { getAccessPage } from '../data/access'
 import { hasAccess } from '../lib/access'
+import { recordVisit } from '../lib/progress'
 
 // Chặn các trang câu hỏi / trả lời sai / lời giải khi chưa nhập mã truy cập của sản phẩm
 export function RequireAccess() {
   const { productId } = useParams()
   const location = useLocation()
   const access = getAccessPage(productId)
+  const allowed = access ? hasAccess(productId) : false
+
+  // Lưu trang đang chơi của mã truy cập để lần nhập mã sau mở lại đúng trang này
+  useEffect(() => {
+    if (allowed) recordVisit(access, location.pathname)
+  }, [access, allowed, location.pathname])
 
   // Sản phẩm chưa có Access Page thì để trang con tự xử lý (Sắp ra mắt)
-  if (!access || hasAccess(productId)) return <Outlet />
+  if (!access || allowed) return <Outlet />
 
   return (
     <section className="px-4 py-20 sm:px-8">

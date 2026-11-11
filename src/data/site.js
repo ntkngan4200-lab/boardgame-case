@@ -19,10 +19,9 @@ export const navLinks = [
 // Cột "Vụ án" ở Footnote: các vụ án đã ra mắt, bấm vào tên để tới Access Page
 export const caseLinks = products.filter((product) => !product.comingSoon).map(({ title, to }) => ({ label: title, to }))
 
-// Để trống, điền sau
 export const contact = {
   phone: '0942 655 204',
-  email: '',
+  email: 'kinhlupinfo@gmail.com',
 }
 
 // Để trống, điền sau: link trang mạng xã hội / gian hàng

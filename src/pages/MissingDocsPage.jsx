@@ -1,4 +1,4 @@
-import mascot from '../assets/brand/mascot.webp'
+import mascot from '../assets/brand/mascot-dung.png'
 import { CaseBand } from '../components/CaseBand'
 import { ProductCard } from '../components/ProductCarousel'
 import { docRequestProducts } from '../data/support'
@@ -9,8 +9,11 @@ export function MissingDocsPage() {
       <title>Hồ sơ · Hỗ trợ · Kính Lúp</title>
       <CaseBand stage="Hỗ trợ · Hồ sơ" heading="HỖ TRỢ CUNG CẤP HỒ SƠ BỊ THIẾU/HƯ HỎNG" />
 
-      <section className="px-4 pt-12 sm:px-8 sm:pt-16">
-        <div className="answer-sheet support-copy mx-auto max-w-3xl px-5 py-8 sm:px-12 sm:py-12">
+      {/* Chừa chỗ phía trên cho mascot đứng trên mép khung văn bản */}
+      <section className="px-4 pt-28 sm:px-8 sm:pt-36">
+        <div className="answer-sheet support-copy relative mx-auto max-w-3xl px-5 py-8 sm:px-12 sm:py-12">
+          {/* Mascot hàng 4, cột 3 trong "Bảng 25 tư thế mascot đáng yêu" */}
+          <img src={mascot} alt="" width="155" height="202" className="mascot-perch" />
           <p>
             Kính Lúp rất tiếc vì trải nghiệm của bạn với trò chơi chưa thực sự trọn vẹn do một số vấn đề về hồ sơ.
           </p>
@@ -28,8 +31,7 @@ export function MissingDocsPage() {
           </p>
           <p>
             Một lần nữa, cảm ơn bạn đã tin tưởng và đồng hành cùng Kính Lúp. Bọn mình sẽ cố gắng hoàn thiện hơn để bạn
-            không phải ghé thăm mục này nữa nha.{' '}
-            <img src={mascot} alt="" width="120" height="160" className="mascot-inline" />
+            không phải ghé thăm mục này nữa nha.
           </p>
         </div>
       </section>

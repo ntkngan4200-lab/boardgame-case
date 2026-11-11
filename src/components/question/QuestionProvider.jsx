@@ -3,23 +3,29 @@ import { countCorrect, verifyAnswer } from '../../lib/verifyAnswer'
 
 const QuestionContext = createContext(null)
 
-export function QuestionProvider({ question, onAnswer, children }) {
+// initialSelectedIds: lựa chọn đã lưu của mã truy cập (hoặc đáp án điền sẵn cho mã admin); onSelectionChange: lưu tiến trình
+export function QuestionProvider({ question, initialSelectedIds = [], onSelectionChange, onAnswer, children }) {
   const titleId = useId()
   const pick = question.pick ?? 1
   // minPick < pick: chọn từ minPick tới pick lựa chọn (vd. 1–2 hồ sơ); mặc định phải chọn đủ pick
   const minPick = question.minPick ?? pick
-  const [selectedIds, setSelectedIds] = useState([])
+  const [selectedIds, setSelectedIds] = useState(initialSelectedIds)
   const [status, setStatus] = useState('idle') // 'idle' | 'missing' | 'limit' | 'checking'
+
+  function select(optionIds) {
+    setSelectedIds(optionIds)
+    onSelectionChange?.(optionIds)
+  }
 
   // Chọn chỉ đánh dấu X; chuyển trang chỉ xảy ra khi bấm Xác nhận
   function toggle(optionId) {
     setStatus('idle')
     if (pick === 1) {
-      setSelectedIds([optionId])
+      select([optionId])
     } else if (selectedIds.includes(optionId)) {
-      setSelectedIds(selectedIds.filter((id) => id !== optionId))
+      select(selectedIds.filter((id) => id !== optionId))
     } else if (selectedIds.length < pick) {
-      setSelectedIds([...selectedIds, optionId])
+      select([...selectedIds, optionId])
     } else {
       setStatus('limit')
     }

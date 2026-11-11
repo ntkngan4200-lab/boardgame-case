@@ -1,11 +1,11 @@
 import { useId, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import mascot from '../assets/brand/mascot.webp'
+import mascot from '../assets/brand/mascot-doi.png'
 import { CaseBand } from '../components/CaseBand'
 import { Question } from '../components/question/Question'
 import { useQuestion } from '../components/question/QuestionProvider'
 import { getDocRequestCase } from '../data/support'
-import { submitDocRequest } from '../lib/docRequest'
+import { callBackend } from '../lib/backend'
 import { ComingSoonPage } from './ComingSoonPage'
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -30,8 +30,9 @@ function DocRequestContent({ request }) {
     const documents = question.options.filter((option) => optionIds.includes(option.id))
     setSendError('')
     try {
-      await submitDocRequest({
+      await callBackend('doc-request', {
         productId: request.productId,
+        caseTitle: request.title,
         email: email.trim(),
         documents: documents.map(({ id, label }) => ({ id, label })),
       })
@@ -138,7 +139,8 @@ function RequestSent() {
   return (
     <section className="px-4 py-12 sm:px-8 sm:py-16">
       <div className="answer-sheet mx-auto max-w-2xl px-6 py-10 text-center sm:px-12 sm:py-14">
-        <img src={mascot} alt="" width="120" height="160" className="mx-auto h-28 w-auto sm:h-32" />
+        {/* Mascot hàng 3, cột 5 trong "Bảng 25 tư thế mascot đáng yêu" */}
+        <img src={mascot} alt="" width="161" height="204" className="mx-auto h-28 w-auto sm:h-32" />
         <h2 className="mt-6 text-balance font-display text-3xl leading-tight tracking-wide text-maroon sm:text-4xl">
           Hãy đợi Kính Lúp một chút nha.
         </h2>

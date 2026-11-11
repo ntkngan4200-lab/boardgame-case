@@ -3,6 +3,8 @@ import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { BuyButton } from '../components/BuyButton'
 import { getAccessPage } from '../data/access'
 import { grantAccess } from '../lib/access'
+import { lookupLocation } from '../lib/location'
+import { openSession } from '../lib/progress'
 import { verifyAccessCode } from '../lib/verifyAnswer'
 import { ComingSoonPage } from './ComingSoonPage'
 
@@ -31,14 +33,17 @@ function AccessContent({ access }) {
       return
     }
     setStatus('checking')
-    if (await verifyAccessCode(access, code)) {
-      grantAccess(access.productId)
-      // Bị chặn ở trang nào thì quay lại đúng trang đó, nếu không thì vào Câu hỏi 1
-      const from = location.state?.from
-      navigate(from?.startsWith(`/${access.productId}/`) ? from : access.next, { replace: Boolean(from) })
-    } else {
+    const session = await verifyAccessCode(access, code)
+    if (!session) {
       setStatus('wrong')
+      return
     }
+    // Mở lại trang mã này đang chơi dở; chưa chơi thì về trang bị chặn (nếu có), không thì vào Câu hỏi 1
+    const resumePath = await openSession(access, session.code)
+    grantAccess(access.productId, session)
+    const from = location.state?.from
+    const target = resumePath === access.next && from?.startsWith(`/${access.productId}/`) ? from : resumePath
+    navigate(target, { replace: Boolean(from) })
   }
 
   return (
@@ -79,6 +84,8 @@ function AccessContent({ access }) {
             aria-describedby={messageId}
             onChange={() => {
               if (status !== 'idle') setStatus('idle')
+              // Đoán vị trí sẵn trong lúc người chơi gõ mã để ghi kèm lượt truy cập
+              lookupLocation()
             }}
           />
           <p
