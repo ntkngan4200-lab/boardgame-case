@@ -779,15 +779,6 @@
     color: rgb(var(--red));
   }
 
-  /* Mascot kính lúp nhỏ nằm trong dòng chữ */
-  .mascot-inline {
-    display: inline-block;
-    height: 1.9em;
-    width: auto;
-    margin: -0.5em 0.15em -0.35em 0.05em;
-    vertical-align: baseline;
-  }
-
   /* Mascot đứng trên mép trên khung văn bản (trang Hồ sơ): chân chạm viền khung */
   .mascot-perch {
     position: absolute;

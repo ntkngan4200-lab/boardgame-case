@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom'
-import mascot from '../assets/brand/mascot.webp'
 import { BuyButton } from '../components/BuyButton'
 import { CaseBand } from '../components/CaseBand'
 import { FoldList } from '../components/FoldList'
@@ -43,11 +42,15 @@ const steps = [
   {
     title: 'Truy cập trang điện tử của vụ án',
     body: (
-      <p>
-        Tiếp theo, hãy quét mã QR và nhập mã bảo mật được cung cấp trên bìa thư để truy cập trang điện tử của vụ án.
-        Đây là không gian để bạn vừa đối chiếu đáp án từ các phán đoán của mình, vừa nhận thêm những gợi ý mấu chốt
-        cho hành trình điều tra.
-      </p>
+      // Cùng bố cục Bước 1: chữ bên trái, decal bên phải
+      <div className="grid gap-6 sm:grid-cols-[minmax(0,1fr)_13rem] sm:items-center sm:gap-10 lg:grid-cols-[minmax(0,1fr)_15rem]">
+        <p>
+          Tiếp theo, hãy quét mã QR và nhập mã bảo mật được cung cấp trên bìa thư để truy cập trang điện tử của vụ án.
+          Đây là không gian để bạn vừa đối chiếu đáp án từ các phán đoán của mình, vừa nhận thêm những gợi ý mấu chốt
+          cho hành trình điều tra.
+        </p>
+        <GuideImage image={guideImages.decal} className="mx-auto w-3/5 sm:w-full" />
+      </div>
     ),
   },
   {
@@ -71,8 +74,7 @@ const steps = [
       <>
         <p>
           Đây là lúc các bạn phát huy tối đa kỹ năng quan sát và tư duy suy luận để truy vết các dữ kiện từ bộ hồ sơ
-          được cung cấp. Những manh mối đắt giá đôi khi ẩn giấu ở những chi tiết nhỏ nhất — <em>Insight starts in sight!</em>{' '}
-          <img src={mascot} alt="" width="120" height="160" className="mascot-inline" />
+          được cung cấp. Những manh mối đắt giá đôi khi ẩn giấu ở những chi tiết nhỏ nhất — <em>Insight starts in sight!</em>
         </p>
         <ul className="mt-6 grid grid-cols-2 gap-4 sm:mt-8 sm:gap-6 lg:grid-cols-4">
           {guideDocuments.map((document) => (

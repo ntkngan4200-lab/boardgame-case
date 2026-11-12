@@ -86,7 +86,7 @@ function NavItems({ onNavigate }) {
   })
 }
 
-// Header: Logo bên trái; dồn sang phải: Thanh tìm kiếm · Trang chủ, Về chúng tôi, Hỗ trợ (menu con), Liên hệ
+// Header: Logo bên trái; dồn sang phải: Thanh tìm kiếm · Trang chủ, Về Kính Lúp, Hỗ trợ (menu con), Liên hệ
 export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false)
   const panelId = useId()

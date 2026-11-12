@@ -1,6 +1,7 @@
 import { Route, Routes } from 'react-router-dom'
 import { RequireAccess } from './components/RequireAccess'
 import { SiteLayout } from './layouts/SiteLayout'
+import { AboutPage } from './pages/AboutPage'
 import { AccessPage } from './pages/AccessPage'
 import { ComingSoonPage } from './pages/ComingSoonPage'
 import { DocRequestPage } from './pages/DocRequestPage'
@@ -17,6 +18,7 @@ export default function App() {
     <Routes>
       <Route element={<SiteLayout />}>
         <Route index element={<HomePage />} />
+        <Route path="ve-kinh-lup" element={<AboutPage />} />
         <Route path="ho-tro/huong-dan-choi" element={<GuidePage />} />
         <Route path="ho-tro/faq" element={<FaqPage />} />
         <Route path="ho-tro/ho-so" element={<MissingDocsPage />} />

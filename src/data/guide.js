@@ -1,4 +1,5 @@
 import danhMuc from '../assets/guide/guide-danh-muc.webp'
+import decal from '../assets/guide/guide-decal.webp'
 import giaiDoan from '../assets/guide/guide-giai-doan.webp'
 import hs1 from '../assets/guide/guide-hs1.webp'
 import hs2 from '../assets/guide/guide-hs2.webp'
@@ -14,6 +15,13 @@ export const guideImages = {
     width: 794,
     height: 1124,
     alt: 'Danh mục Hồ sơ vụ án Phạm Thùy Chi, tên các hồ sơ được làm mờ',
+  },
+  // Drive "Web/Decal.pdf": decal trên bìa thư với mã QR và mã truy cập
+  decal: {
+    src: decal,
+    width: 720,
+    height: 1095,
+    alt: 'Decal Giai đoạn 1 trên bìa thư: mã QR dẫn tới trang điện tử của vụ án và ô mã truy cập',
   },
   thu: {
     src: thu,

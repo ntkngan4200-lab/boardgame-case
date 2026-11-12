@@ -11,7 +11,7 @@ export const supportLinks = [
 // Thanh công cụ Header. "Liên hệ" kéo xuống cột Liên hệ ở Footnote của trang đang xem.
 export const navLinks = [
   { label: 'Trang chủ', to: '/' },
-  { label: 'Về chúng tôi', to: '/ve-chung-toi' },
+  { label: 'Về Kính Lúp', to: '/ve-kinh-lup' },
   { label: 'Hỗ trợ', children: supportLinks },
   { label: 'Liên hệ', href: '#lien-he' },
 ]
