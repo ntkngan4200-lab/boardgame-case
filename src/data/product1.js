@@ -161,7 +161,7 @@ const falseAnswers = {
     hints: [
       'Vật chứng thu giữ tại hiện trường có điểm gì bất thường?',
       'Tại sao Phạm Thùy Chi phải giữ một chiếc nhẫn bên trong túi váy?',
-      'Chiếc nhẫn Phạm Thùy Chi cất giữ đã từng được bắt gặp ở đâu?',
+      'Liệu chiếc nhẫn Phạm Thùy Chi cất giữ có phải là chiếc duy nhất?',
     ],
   },
   'p1/o2/q1': {

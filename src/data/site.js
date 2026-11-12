@@ -24,11 +24,16 @@ export const contact = {
   email: 'kinhlupinfo@gmail.com',
 }
 
-// Để trống, điền sau: link trang mạng xã hội / gian hàng
+// Link trang mạng xã hội / gian hàng (bỏ tham số theo dõi như fbclid). href trống: biểu tượng chưa bấm được
 export const socialLinks = [
-  { id: 'facebook', label: 'Facebook', href: '', icon: siFacebook },
-  { id: 'tiktok', label: 'TikTok', href: '', icon: siTiktok },
-  { id: 'threads', label: 'Threads', href: '', icon: siThreads },
-  { id: 'instagram', label: 'Instagram', href: '', icon: siInstagram },
+  {
+    id: 'facebook',
+    label: 'Facebook',
+    href: 'https://www.facebook.com/people/K%C3%ADnh-L%C3%BAp-Board-game-ph%C3%A1-%C3%A1n-Vi%E1%BB%87t-Nam/61596411782473/',
+    icon: siFacebook,
+  },
+  { id: 'tiktok', label: 'TikTok', href: 'https://www.tiktok.com/@kinhlupboardgame', icon: siTiktok },
+  { id: 'threads', label: 'Threads', href: 'https://www.threads.com/@_kinhlupbg', icon: siThreads },
+  { id: 'instagram', label: 'Instagram', href: 'https://www.instagram.com/_kinhlupbg', icon: siInstagram },
   { id: 'shopee', label: 'Shopee', href: '', icon: siShopee },
 ]
