@@ -215,10 +215,10 @@ const explanations = {
         {
           id: 'cctv',
           src: cctvImage,
-          ratio: 4 / 3,
+          ratio: 1240 / 827,
           frame: 'polaroid',
           caption: 'Ảnh trích xuất camera lúc 21g00',
-          marks: [{ id: 'nhan-cctv', u: 0.618, v: 0.495, r: 0.05, ring: 0.025, lensAngle: 15 }],
+          marks: [{ id: 'nhan-cctv', u: 0.5313, v: 0.423, r: 0.03, ring: 0.008, lensAngle: 15 }],
         },
       ],
       strings: [
