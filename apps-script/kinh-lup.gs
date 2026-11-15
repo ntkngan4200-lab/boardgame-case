@@ -1,19 +1,22 @@
 // Google Apps Script cho web Kính Lúp — một Web app làm 3 việc:
 //   1. doc-request: khách gửi yêu cầu bổ sung hồ sơ → gửi thông báo về NOTIFY_EMAIL
-//   2. access:      người chơi nhập đúng mã → ghi lượt truy cập vào trang tính "Truy cập", trả về tiến trình đã lưu
+//   2. access:      người chơi nhập đúng mã → ghi lượt truy cập vào tab của sản phẩm ("P1", "P2"…), trả về tiến trình đã lưu
 //   3. progress:    lưu tiến trình chơi theo mã (trang đang chơi + các ô đã chọn) để mở lại trên thiết bị khác
 // và mỗi ngày gửi email thống kê lượt truy cập 24 giờ qua (hàm guiThongKe, chạy theo trigger).
 //
 // Cách dựng (một lần):
 //   a. Tạo một Google Sheet mới (vd. "Kính Lúp – Truy cập") → Tiện ích mở rộng → Apps Script → dán toàn bộ file này → Lưu.
-//   b. Chọn hàm caiDat → Chạy → cấp quyền (gửi email, sửa trang tính). Hàm tạo trang tính "Truy cập" và lịch gửi thống kê lúc 8 giờ sáng.
+//   b. Chọn hàm caiDat → Chạy → cấp quyền (gửi email, sửa trang tính). Hàm tạo lịch gửi thống kê lúc 8 giờ sáng,
+//      lịch tự đặt tên tab mới thành P(n+1) (khiThemTab), và chuyển trang tính "Truy cập" cũ, nếu có, thành tab "P1".
 //   c. Triển khai → Tùy chọn triển khai mới → Ứng dụng web (Thực thi với tư cách: Tôi; Người có quyền truy cập: Bất kỳ ai)
 //      → chép URL /exec vào appsScriptUrl trong src/lib/backend.js.
 //   Sửa file này về sau: Triển khai → Quản lý các lần triển khai → sửa → Phiên bản mới (giữ nguyên URL).
 
 const NOTIFY_EMAIL = 'kinhlupinfo@gmail.com'
 const TIME_ZONE = 'Asia/Ho_Chi_Minh'
-const LOG_SHEET = 'Truy cập'
+const LEGACY_LOG_SHEET = 'Truy cập'
+const LOG_HEADER = ['Thời gian', 'Mã truy cập', 'Vị trí truy cập', 'Trang đang chơi']
+const DAY_SHADE = '#d9d9d9'
 const MAX_DOCUMENTS = 3
 const MAX_PROGRESS_LENGTH = 8000
 
@@ -114,7 +117,9 @@ function handleAccess(request) {
   if (!player) return { ok: false }
   const progress = readProgress(player)
   const page = progress && !progress.finished && progress.pageLabel ? progress.pageLabel : text(request.startLabel, 80)
-  logSheet().appendRow([new Date(), player.label, player.productId, text(request.location, 120) || 'Không xác định', page])
+  const sheet = logSheet(player.productId)
+  sheet.appendRow([new Date(), player.label, text(request.location, 120) || 'Không xác định', page])
+  shadeDays(sheet)
   return { ok: true, progress }
 }
 
@@ -143,60 +148,121 @@ function readProgress(player) {
   return json ? JSON.parse(json) : null
 }
 
-// Chạy theo trigger mỗi ngày: bảng Mã truy cập · Giờ truy cập · Vị trí truy cập · Trang đang chơi của 24 giờ qua
+// Chạy theo trigger mỗi ngày: thống kê 24 giờ qua của tất cả sản phẩm (mọi tab P1, P2…),
+// mỗi sản phẩm một phần riêng gồm câu tóm tắt và bảng Mã truy cập · Giờ truy cập · Vị trí truy cập · Trang đang chơi
 function guiThongKe() {
   const since = Date.now() - 24 * 60 * 60 * 1000
-  const rows = logSheet()
-    .getDataRange()
-    .getValues()
-    .slice(1)
-    .filter((row) => row[0] instanceof Date && row[0].getTime() >= since)
-    .sort((a, b) => String(a[1]).localeCompare(String(b[1])) || a[0] - b[0])
-  const codes = new Set(rows.map((row) => row[1]))
   const today = Utilities.formatDate(new Date(), TIME_ZONE, 'dd/MM/yyyy')
-
   const cell = 'border:1px solid #c9b8ad;padding:6px 10px;text-align:left'
   const head = ['Mã truy cập', 'Giờ truy cập', 'Vị trí truy cập', 'Trang đang chơi']
     .map((title) => `<th style="${cell};background:#5b1a1a;color:#fff">${title}</th>`)
     .join('')
-  const body = rows
-    .map((row) => {
-      const values = [row[1], Utilities.formatDate(row[0], TIME_ZONE, 'HH:mm dd/MM/yyyy'), row[3], row[4]]
-      return `<tr>${values.map((value) => `<td style="${cell}">${escapeHtml(value)}</td>`).join('')}</tr>`
-    })
-    .join('')
-  const summary = rows.length
-    ? `Trong 24 giờ qua có ${rows.length} lượt truy cập từ ${codes.size} mã truy cập.`
-    : 'Trong 24 giờ qua chưa có lượt truy cập nào.'
+
+  const sections = productSheets().map((sheet) => {
+    const product = sheet.getName()
+    const rows = sheet
+      .getDataRange()
+      .getValues()
+      .slice(1)
+      .filter((row) => row[0] instanceof Date && row[0].getTime() >= since)
+      .sort((a, b) => String(a[1]).localeCompare(String(b[1])) || a[0] - b[0])
+    const codes = new Set(rows.map((row) => row[1]))
+    const summary = rows.length
+      ? `Sản phẩm ${product}: trong 24 giờ qua có ${rows.length} lượt truy cập từ ${codes.size} mã truy cập.`
+      : `Sản phẩm ${product}: trong 24 giờ qua chưa có lượt truy cập nào.`
+    const body = rows
+      .map((row) => {
+        const values = [row[1], Utilities.formatDate(row[0], TIME_ZONE, 'HH:mm dd/MM/yyyy'), row[2], row[3]]
+        return `<tr>${values.map((value) => `<td style="${cell}">${escapeHtml(value)}</td>`).join('')}</tr>`
+      })
+      .join('')
+    const html =
+      `<h3 style="font-family:Arial,sans-serif;margin:22px 0 6px">Sản phẩm ${escapeHtml(product)}</h3>` +
+      `<p style="margin:0 0 8px">${escapeHtml(summary)}</p>` +
+      (rows.length ? `<table style="border-collapse:collapse;font-family:Arial,sans-serif;font-size:14px"><tr>${head}</tr>${body}</table>` : '')
+    return { summary, html }
+  })
 
   MailApp.sendEmail({
     to: NOTIFY_EMAIL,
     subject: `Thống kê truy cập 24 giờ qua – ${today}`,
-    body: summary,
-    htmlBody:
-      `<p>Dear team Kính Lúp,</p><p>${summary}</p>` +
-      (rows.length ? `<table style="border-collapse:collapse;font-family:Arial,sans-serif;font-size:14px"><tr>${head}</tr>${body}</table>` : ''),
+    body: sections.map((section) => section.summary).join('\n'),
+    htmlBody: `<p>Dear team Kính Lúp,</p>${sections.map((section) => section.html).join('')}`,
   })
 }
 
-// Chạy một lần sau khi dán script: tạo trang tính ghi lượt truy cập và lịch gửi thống kê mỗi ngày lúc 8 giờ sáng
+// Chạy một lần sau khi dán script: tạo lịch gửi thống kê mỗi ngày lúc 8 giờ sáng và lịch tự đặt tên tab mới.
+// Trang tính "Truy cập" cũ (chỉ có P1) được đổi thành tab "P1", bỏ cột "Vụ án" và tô xám cách ngày.
 function caiDat() {
-  logSheet()
+  const spreadsheet = SpreadsheetApp.getActiveSpreadsheet()
+  const legacy = spreadsheet.getSheetByName(LEGACY_LOG_SHEET)
+  if (legacy && !spreadsheet.getSheetByName('P1')) {
+    legacy.setName('P1')
+    if (legacy.getRange(1, 3).getValue() === 'Vụ án') legacy.deleteColumn(3)
+    shadeDays(legacy)
+  }
   ScriptApp.getProjectTriggers()
-    .filter((trigger) => trigger.getHandlerFunction() === 'guiThongKe')
+    .filter((trigger) => ['guiThongKe', 'khiThemTab'].indexOf(trigger.getHandlerFunction()) >= 0)
     .forEach((trigger) => ScriptApp.deleteTrigger(trigger))
   ScriptApp.newTrigger('guiThongKe').timeBased().everyDays(1).atHour(8).inTimezone(TIME_ZONE).create()
+  ScriptApp.newTrigger('khiThemTab').forSpreadsheet(spreadsheet).onChange().create()
 }
 
-function logSheet() {
+// Chạy theo trigger khi bấm "+" thêm tab: tab trống mới được đặt tên P(n+1) (đang có đến P1 thì thành P2)
+// và dựng sẵn hàng tiêu đề như tab P1, để lượt truy cập của sản phẩm đó ghi vào đây.
+function khiThemTab(e) {
+  if (e && e.changeType !== 'INSERT_GRID') return
+  SpreadsheetApp.getActiveSpreadsheet()
+    .getSheets()
+    .filter((sheet) => !/^P\d+$/.test(sheet.getName()) && sheet.getName() !== LEGACY_LOG_SHEET && sheet.getLastRow() === 0)
+    .forEach((sheet) => {
+      sheet.setName(`P${nextProductNumber()}`)
+      prepareLogSheet(sheet)
+    })
+}
+
+// Mỗi sản phẩm một tab, đặt tên theo mã sản phẩm: "P1", "P2"…
+function logSheet(productId) {
+  const name = productId.toUpperCase()
   const spreadsheet = SpreadsheetApp.getActiveSpreadsheet()
-  let sheet = spreadsheet.getSheetByName(LOG_SHEET)
-  if (!sheet) {
-    sheet = spreadsheet.insertSheet(LOG_SHEET)
-    sheet.appendRow(['Thời gian', 'Mã truy cập', 'Vụ án', 'Vị trí truy cập', 'Trang đang chơi'])
-    sheet.setFrozenRows(1)
-  }
+  let sheet = spreadsheet.getSheetByName(name)
+  if (!sheet) sheet = spreadsheet.insertSheet(name)
+  if (sheet.getLastRow() === 0) prepareLogSheet(sheet)
   return sheet
+}
+
+function prepareLogSheet(sheet) {
+  sheet.appendRow(LOG_HEADER)
+  sheet.setFrozenRows(1)
+}
+
+function nextProductNumber() {
+  return productSheets().reduce((max, sheet) => Math.max(max, Number(sheet.getName().slice(1))), 0) + 1
+}
+
+function productSheets() {
+  return SpreadsheetApp.getActiveSpreadsheet()
+    .getSheets()
+    .filter((sheet) => /^P\d+$/.test(sheet.getName()))
+    .sort((a, b) => Number(a.getName().slice(1)) - Number(b.getName().slice(1)))
+}
+
+// Tô xám cột Thời gian cách ngày (ngày thứ 1, 3, 5… có lượt truy cập) để dễ phân biệt các ngày
+function shadeDays(sheet) {
+  const count = sheet.getLastRow() - 1
+  if (count < 1) return
+  const range = sheet.getRange(2, 1, count, 1)
+  let previousDay = null
+  let shaded = false
+  const colors = range.getValues().map(([time]) => {
+    const day = time instanceof Date ? Utilities.formatDate(time, TIME_ZONE, 'yyyy-MM-dd') : String(time)
+    if (day !== previousDay) {
+      shaded = previousDay === null ? true : !shaded
+      previousDay = day
+    }
+    return [shaded ? DAY_SHADE : null]
+  })
+  range.setBackgrounds(colors)
 }
 
 // "A" · "A và B" · "A, B và C"

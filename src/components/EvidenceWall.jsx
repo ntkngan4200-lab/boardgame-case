@@ -62,8 +62,8 @@ function WallBoard({ wall, layout, className }) {
           </radialGradient>
         </defs>
 
-        {/* Mặt bảng nỉ graphite */}
-        <rect width={layout.width} height={layout.height} style={{ fill: 'rgb(var(--graphite))' }} />
+        {/* Mặt bảng nỉ xám rêu */}
+        <rect width={layout.width} height={layout.height} style={{ fill: 'rgb(var(--sage))' }} />
         <rect width={layout.width} height={layout.height} fill="#000" opacity=".35" filter={`url(#${uid}-felt)`} />
         <rect width={layout.width} height={layout.height} fill={`url(#${uid}-light)`} />
 

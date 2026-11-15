@@ -1,6 +1,6 @@
 import mascot from '../assets/brand/mascot-dung.png'
 import { CaseBand } from '../components/CaseBand'
-import { ProductCard } from '../components/ProductCarousel'
+import { CaseGrid } from '../components/CaseGrid'
 import { docRequestProducts } from '../data/support'
 
 export function MissingDocsPage() {
@@ -40,11 +40,7 @@ export function MissingDocsPage() {
         <h2 id="chon-vu-an-tieu-de" className="text-center font-display text-3xl tracking-wide text-cream sm:text-4xl">
           Chọn Vụ án
         </h2>
-        <ul className="mx-auto mt-8 grid max-w-3xl grid-cols-2 gap-x-4 gap-y-8 sm:mt-10 sm:gap-x-8 sm:gap-y-10">
-          {docRequestProducts.map((product) => (
-            <ProductCard key={product.id} product={product} to={product.to} className="case-grid__item" />
-          ))}
-        </ul>
+        <CaseGrid products={docRequestProducts} className="mt-8 sm:mt-10" />
       </section>
     </>
   )

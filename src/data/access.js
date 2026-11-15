@@ -15,6 +15,8 @@ const accessPages = {
       src: cover1680,
       width: 1680,
       height: 944,
+      // Ảnh nhỏ dùng làm nền mặt đường kéo dài bên dưới (đã làm mờ, không cần bản lớn)
+      road: cover960,
       alt: 'Poster vụ án Phạm Thùy Chi: cô gái mặc váy đi trên con phố đêm ướt mưa, cạnh Khách sạn Mai Hoa',
     },
     codeHashes: [

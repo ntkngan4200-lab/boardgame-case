@@ -52,7 +52,7 @@ function AccessContent({ access }) {
       <h1 className="sr-only">{access.title}</h1>
 
       {/* Ảnh bìa tràn hết bề ngang; nút Mua ngay tách riêng bên dưới, không đè lên ảnh */}
-      <figure className="full-bleed-image">
+      <figure className="full-bleed-image access-cover">
         <img
           srcSet={access.cover.srcSet}
           sizes="100vw"
@@ -63,54 +63,57 @@ function AccessContent({ access }) {
           fetchPriority="high"
         />
       </figure>
-      <div className="mt-8 flex justify-center px-3 sm:mt-10">
-        <BuyButton />
-      </div>
+      {/* Mặt đường ướt trong ảnh bìa kéo dài xuống, ombre dần vào Footnote; nội dung nằm trên nền */}
+      <div className="access-road" style={{ '--road': `url(${access.cover.road})` }}>
+        <div className="flex justify-center px-3 pt-8 sm:pt-10">
+          <BuyButton />
+        </div>
 
-      <section className="px-4 pb-12 pt-10 sm:px-8 sm:pb-16 sm:pt-14">
-        <form noValidate onSubmit={handleSubmit} className="answer-sheet mx-auto max-w-2xl px-4 py-8 sm:px-10 sm:py-10">
-          <h2 className="text-center font-display text-3xl tracking-wide text-maroon sm:text-4xl">
-            <label htmlFor={inputId}>Mã truy cập</label>
-          </h2>
-          <input
-            id={inputId}
-            name="code"
-            className="code-input mt-6"
-            placeholder="••••"
-            autoComplete="off"
-            autoCapitalize="characters"
-            spellCheck={false}
-            aria-invalid={status === 'wrong'}
-            aria-describedby={messageId}
-            onChange={() => {
-              if (status !== 'idle') setStatus('idle')
-              // Đoán vị trí sẵn trong lúc người chơi gõ mã để ghi kèm lượt truy cập
-              lookupLocation()
-            }}
-          />
-          <p
-            id={messageId}
-            aria-live="polite"
-            className="mt-3 min-h-5 text-center text-sm font-semibold text-maroon"
-          >
-            {status === 'missing' ? 'Hãy nhập mã truy cập trước khi xác nhận.' : ''}
-            {status === 'wrong' ? 'Mã truy cập không đúng. Hãy thử lại.' : ''}
-            {status === 'checking' ? 'Đang kiểm tra…' : ''}
-          </p>
-          <div className="mt-4 flex items-center justify-between gap-3 border-t border-maroon/20 pt-6">
-            <Link to={access.backTo} className="pill-button min-w-[7.5rem] px-5 sm:min-w-44 sm:px-8">
-              Trở lại
-            </Link>
-            <button
-              type="submit"
-              className="confirm-button ml-auto min-w-[7.5rem] px-5 sm:min-w-40 sm:px-8"
-              disabled={status === 'checking'}
+        <section className="px-4 pb-12 pt-10 sm:px-8 sm:pb-16 sm:pt-14">
+          <form noValidate onSubmit={handleSubmit} className="answer-sheet mx-auto max-w-2xl px-4 py-8 sm:px-10 sm:py-10">
+            <h2 className="text-center font-display text-3xl tracking-wide text-maroon sm:text-4xl">
+              <label htmlFor={inputId}>Mã truy cập</label>
+            </h2>
+            <input
+              id={inputId}
+              name="code"
+              className="code-input mt-6"
+              placeholder="••••"
+              autoComplete="off"
+              autoCapitalize="characters"
+              spellCheck={false}
+              aria-invalid={status === 'wrong'}
+              aria-describedby={messageId}
+              onChange={() => {
+                if (status !== 'idle') setStatus('idle')
+                // Đoán vị trí sẵn trong lúc người chơi gõ mã để ghi kèm lượt truy cập
+                lookupLocation()
+              }}
+            />
+            <p
+              id={messageId}
+              aria-live="polite"
+              className="mt-3 min-h-5 text-center text-sm font-semibold text-maroon"
             >
-              Xác nhận
-            </button>
-          </div>
-        </form>
-      </section>
+              {status === 'missing' ? 'Hãy nhập mã truy cập trước khi xác nhận.' : ''}
+              {status === 'wrong' ? 'Mã truy cập không đúng. Hãy thử lại.' : ''}
+              {status === 'checking' ? 'Đang kiểm tra…' : ''}
+            </p>
+            <div className="mt-4 flex items-center justify-between gap-3 border-t border-maroon/20 pt-6">
+              <Link to={access.backTo} className="pill-button min-w-[7.5rem] px-5 sm:min-w-44 sm:px-8">
+                Trở lại
+              </Link>
+              <button
+                type="submit"
+                className="confirm-button ml-auto min-w-[7.5rem] px-5 sm:min-w-40 sm:px-8"
+                disabled={status === 'checking'}
+              >
+                Xác nhận
+              </button>
+            </div>
+          </form>
+        </section>
+      </div>
     </>
   )
 }

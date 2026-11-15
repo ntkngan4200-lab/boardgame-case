@@ -10,7 +10,7 @@ export function ComingSoonPage() {
         <h1 className="mt-3 font-display text-3xl leading-tight text-maroon sm:text-4xl">Trang này đang được xây dựng</h1>
         <Link
           to="/"
-          className="mt-8 inline-block rounded-sm bg-maroon px-5 py-3 text-sm font-semibold text-cream hover:bg-graphite"
+          className="mt-8 inline-block rounded-sm bg-maroon px-5 py-3 text-sm font-semibold text-cream hover:bg-[color-mix(in_srgb,rgb(var(--maroon))_72%,#000)]"
         >
           Về trang chủ
         </Link>

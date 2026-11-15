@@ -16,13 +16,13 @@ export const hook = {
   alt: 'Sổ điều tra mở với ảnh các nhân vật, báo Phù Sa và hồ sơ vụ án, cùng slogan Insight starts in sight',
 }
 
-// Thứ tự mở rộng từ wireframe Homepage (… · 3 · 1 · 2 · …): Vụ án 1 ở giữa, vụ án lẻ bên trái, chẵn bên phải.
-// featured = thẻ được căn giữa khi mở trang. Vụ án chưa ra mắt không có title.
+// Cùng thứ tự với lưới vụ án ở Hỗ trợ › Hồ sơ: vụ án đã ra mắt đứng đầu, sau đó là các vụ sắp ra mắt.
+// Vụ án chưa ra mắt không có title.
 export const products = [
+  { id: 'p1', title: 'Phạm Thùy Chi', poster: posterP1, to: '/p1/truy-cap' },
   { id: 'p7', poster: sapRaMatE, comingSoon: true },
   { id: 'p5', poster: sapRaMatC, comingSoon: true },
   { id: 'p3', poster: sapRaMatB, comingSoon: true },
-  { id: 'p1', title: 'Phạm Thùy Chi', poster: posterP1, to: '/p1/truy-cap', featured: true },
   { id: 'p2', poster: sapRaMatA, comingSoon: true },
   { id: 'p4', poster: sapRaMatD, comingSoon: true },
   { id: 'p6', poster: sapRaMatF, comingSoon: true },

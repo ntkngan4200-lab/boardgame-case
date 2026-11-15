@@ -1,5 +1,5 @@
 import { BuyButton } from '../components/BuyButton'
-import { ProductCarousel } from '../components/ProductCarousel'
+import { CaseGrid } from '../components/CaseGrid'
 import { hook, products } from '../data/home'
 
 export function HomePage() {
@@ -28,15 +28,10 @@ export function HomePage() {
         </div>
       </section>
 
-      <section id="vu-an" className="scroll-mt-6 px-3 pb-6 pt-14 sm:px-8 sm:pt-20" aria-labelledby="vu-an-tieu-de">
+      <section id="vu-an" className="scroll-mt-6 px-4 pb-6 pt-14 sm:px-8 sm:pt-16" aria-label="Vụ án">
         <div className="mx-auto max-w-6xl">
-          <h2 id="vu-an-tieu-de" className="text-center font-display text-4xl tracking-wide text-cream sm:text-5xl">
-            Vụ án
-          </h2>
-          <div className="mt-8 sm:mt-10">
-            <ProductCarousel products={products} label="Danh sách vụ án" />
-          </div>
-          <div className="mt-10 flex justify-center">
+          <CaseGrid products={products} />
+          <div className="mt-12 flex justify-center">
             <BuyButton />
           </div>
         </div>

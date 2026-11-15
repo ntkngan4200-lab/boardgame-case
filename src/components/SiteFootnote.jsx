@@ -64,7 +64,7 @@ export function SiteFootnote() {
           </FootnoteColumn>
         </div>
 
-        <div className="mt-12 border-t border-cream/15 pt-8">
+        <div className="mt-12 border-t border-tan/20 pt-8">
           <ul className="flex flex-wrap items-center justify-center gap-3" aria-label="Mạng xã hội">
             {socialLinks.map((item) => (
               <li key={item.id}>

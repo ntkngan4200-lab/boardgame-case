@@ -45,15 +45,6 @@ export function AboutPage() {
           </p>
         </div>
       </section>
-
-      <section aria-labelledby="nguoi-sang-lap" className="pb-24 sm:pb-32">
-        <div className="case-band px-4 py-10 text-center sm:px-8 sm:py-12">
-          <h2 id="nguoi-sang-lap" className="case-band__title relative z-10 font-display text-cream">
-            Về người sáng lập
-          </h2>
-        </div>
-        {/* Nội dung về người sáng lập: điền sau */}
-      </section>
     </>
   )
 }
