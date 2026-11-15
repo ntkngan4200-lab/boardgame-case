@@ -632,8 +632,7 @@
     margin-top: calc(-1 * var(--crop));
   }
 
-  /* Mặt đường: ô hoa văn lặp dọc, bắt đầu từ dưới đoạn đáy ảnh mờ dần; bóng phản chiếu của nhân vật nằm trên,
-     bắt đầu ngay chỗ đôi bốt bắt đầu mờ để bóng chạm chân */
+  /* Mặt đường: ô hoa văn lặp dọc, bắt đầu từ dưới đoạn đáy ảnh mờ dần */
   .access-scene::before {
     content: '';
     position: absolute;
@@ -642,9 +641,18 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background:
-      var(--reflection) calc(100cqw * var(--reflection-x)) top / calc(100cqw * var(--reflection-w)) auto no-repeat,
-      var(--road-tile) center top / 100% auto repeat-y;
+    background: var(--road-tile) center top / 100% auto repeat-y;
+    pointer-events: none;
+  }
+
+  /* Bóng phản chiếu của nhân vật: bắt đầu ngay dưới đế từng chiếc bốt (trong ảnh bìa) rồi lấn xuống phần thân trang,
+     nằm đè lên ảnh bìa và mặt đường */
+  .access-scene__reflection {
+    position: absolute;
+    top: calc(var(--cover-h) * var(--reflection-y) - var(--crop));
+    left: calc(100cqw * var(--reflection-x));
+    width: calc(100cqw * var(--reflection-w));
+    height: auto;
     pointer-events: none;
   }
 

@@ -57,8 +57,8 @@ function AccessContent({ access }) {
         style={{
           '--cover-ratio': access.cover.height / access.cover.width,
           '--road-tile': `url(${access.cover.road})`,
-          '--reflection': `url(${access.cover.reflection.src})`,
           '--reflection-x': access.cover.reflection.x / access.cover.width,
+          '--reflection-y': access.cover.reflection.y / access.cover.height,
           '--reflection-w': access.cover.reflection.width / access.cover.width,
           '--cover-text-x': access.cover.textX / access.cover.width,
         }}
@@ -74,6 +74,7 @@ function AccessContent({ access }) {
             fetchPriority="high"
           />
         </figure>
+        <img src={access.cover.reflection.src} alt="" className="access-scene__reflection" />
         <div className="access-road">
           <div className="flex justify-center px-3 pt-8 sm:pt-10">
             <BuyButton />

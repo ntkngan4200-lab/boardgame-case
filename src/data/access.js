@@ -19,9 +19,9 @@ const accessPages = {
       height: 944,
       // Mặt đường kéo dài bên dưới bìa: ô hoa văn lặp dọc liền mạch, dựng từ dải mặt đường sát đáy ảnh (cùng bề ngang 1680)
       road: roadTile,
-      // Bóng phản chiếu của nhân vật trên mặt đường ướt (lật ngược quanh chỗ chân chạm đất, lấn xuống phần thân trang);
-      // x, width: vị trí và bề ngang khung nhân vật trong ảnh bìa 1680
-      reflection: { src: reflection, x: 1080, width: 320 },
+      // Bóng phản chiếu của nhân vật trên mặt đường ướt: bắt đầu ngay dưới đế từng chiếc bốt (theo "Giày des"),
+      // xiên phải, lấn xuống phần thân trang; x, y, width: vị trí và bề ngang khung bóng theo toạ độ ảnh bìa 1680×944
+      reflection: { src: reflection, x: 1080, y: 840, width: 449 },
       // Lề trái của khối chữ trong ảnh bìa: màn rộng canh cột Mua ngay + ô nhập mã theo lề này, chừa chỗ cho bóng nhân vật
       textX: 256,
       alt: 'Poster vụ án Phạm Thùy Chi: cô gái mặc váy đi trên con phố đêm ướt mưa, cạnh Khách sạn Mai Hoa',
