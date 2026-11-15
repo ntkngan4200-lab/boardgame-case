@@ -1,5 +1,7 @@
 import cover960 from '../assets/access/access-cover-960.webp'
 import cover1680 from '../assets/access/access-cover-1680.webp'
+import roadTile from '../assets/access/access-road-tile.webp'
+import reflection from '../assets/access/access-reflection.webp'
 
 // Access Page của từng sản phẩm: ảnh bìa + ô nhập mã truy cập.
 // codeHashes = SHA-256 của "<productId>:<mã viết hoa>", tạo bằng:
@@ -15,8 +17,13 @@ const accessPages = {
       src: cover1680,
       width: 1680,
       height: 944,
-      // Ảnh nhỏ dùng làm nền mặt đường kéo dài bên dưới (đã làm mờ, không cần bản lớn)
-      road: cover960,
+      // Mặt đường kéo dài bên dưới bìa: ô hoa văn lặp dọc liền mạch, dựng từ dải mặt đường sát đáy ảnh (cùng bề ngang 1680)
+      road: roadTile,
+      // Bóng phản chiếu của nhân vật trên mặt đường ướt (lật ngược quanh chỗ chân chạm đất, lấn xuống phần thân trang);
+      // x, width: vị trí và bề ngang khung nhân vật trong ảnh bìa 1680
+      reflection: { src: reflection, x: 1080, width: 320 },
+      // Lề trái của khối chữ trong ảnh bìa: màn rộng canh cột Mua ngay + ô nhập mã theo lề này, chừa chỗ cho bóng nhân vật
+      textX: 256,
       alt: 'Poster vụ án Phạm Thùy Chi: cô gái mặc váy đi trên con phố đêm ướt mưa, cạnh Khách sạn Mai Hoa',
     },
     codeHashes: [

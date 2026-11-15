@@ -602,76 +602,85 @@
     height: auto;
   }
 
-  /* Access Page: mép dưới ảnh bìa nhoè rồi tan dần vào nền mặt đường (nền lấn lên dưới mép ảnh),
-     để ảnh bìa và nền liền thành một bức tranh */
-  .access-cover {
-    position: relative;
-    z-index: 1;
-    -webkit-mask-image: linear-gradient(to bottom, black 91%, transparent 100%);
-    mask-image: linear-gradient(to bottom, black 91%, transparent 100%);
-  }
-
-  .access-cover::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    -webkit-backdrop-filter: blur(6px) saturate(0.9);
-    backdrop-filter: blur(6px) saturate(0.9);
-    -webkit-mask-image: linear-gradient(to bottom, transparent 90.5%, black 98%);
-    mask-image: linear-gradient(to bottom, transparent 90.5%, black 98%);
-  }
-
-  /* Access Page: mặt đường dưới ảnh bìa kéo dài (dải đáy ảnh lật ngược như bóng nước, làm mờ),
-     tối dần tới tận ranh giới Footnote (không pha màu nền trang); Footnote vẫn tách riêng như các trang khác */
-  .access-road {
-    /* Lấn lên 10% chiều cao ảnh bìa 1680×944 (dưới dòng chữ cuối trong ảnh) làm nền cho đoạn ảnh tan dần */
-    --overlap: calc(100vw * 944 / 1680 * 0.1);
+  /* Access Page: mặt đường ướt trong ảnh bìa kéo dài xuống tới Footnote (dựng từ dải mặt đường sát đáy ảnh,
+     cùng tỉ lệ, nối liền đúng mép đáy ảnh), hoa văn rõ nét, ombre dần sang nâu ấm */
+  .access-scene {
+    --cover-h: calc(100cqw * var(--cover-ratio));
+    /* Cắt bớt phần trời phía trên để chữ và nhân vật trong bìa dời lên */
+    --crop: calc(var(--cover-h) * 0.08);
+    --seam: calc(var(--cover-h) - var(--crop));
+    /* Đoạn đáy ảnh bìa mờ dần, hoà vào hoa văn mặt đường nằm bên dưới */
+    --fade: calc(var(--cover-h) * 0.035);
+    --scene-dark: 46 30 22; /* nâu ấm của mặt đường ướt */
+    container-type: inline-size;
     position: relative;
     isolation: isolate;
-    overflow: hidden;
-    margin-top: calc(-1 * var(--overlap));
-    padding-top: var(--overlap);
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    background-color: rgb(var(--scene-dark));
   }
 
-  .access-road::before,
-  .access-road::after {
+  .access-cover {
+    height: var(--seam);
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(to top, transparent, black var(--fade));
+    mask-image: linear-gradient(to top, transparent, black var(--fade));
+  }
+
+  .access-cover img {
+    margin-top: calc(-1 * var(--crop));
+  }
+
+  /* Mặt đường: ô hoa văn lặp dọc, bắt đầu từ dưới đoạn đáy ảnh mờ dần; bóng phản chiếu của nhân vật nằm trên,
+     bắt đầu ngay chỗ đôi bốt bắt đầu mờ để bóng chạm chân */
+  .access-scene::before {
     content: '';
     position: absolute;
     z-index: -1;
+    top: calc(var(--seam) - var(--fade));
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background:
+      var(--reflection) calc(100cqw * var(--reflection-x)) top / calc(100cqw * var(--reflection-w)) auto no-repeat,
+      var(--road-tile) center top / 100% auto repeat-y;
     pointer-events: none;
   }
 
-  .access-road::before {
-    inset: -24px;
-    background-image: var(--road);
-    background-repeat: no-repeat;
-    /* Chỉ lấy ~1/12 phía đáy ảnh (mặt đường, dưới phần chữ), kéo giãn theo chiều cao vùng nền */
-    background-size: 100% 1200%;
-    background-position: center bottom;
-    transform: scaleY(-1);
-    filter: blur(6px) saturate(0.9);
-  }
-
-  .access-road::after {
+  /* Ombre: cả mặt đường và bóng nhân vật mờ dần về phía Footnote, tan hẳn vào nâu ấm ở mép Footnote */
+  .access-scene::after {
+    content: '';
+    position: absolute;
     inset: 0;
     background: linear-gradient(
       to bottom,
-      rgb(0 0 0 / 0.15) 0%,
-      rgb(0 0 0 / 0.35) 18%,
-      rgb(0 0 0 / 0.5) 50%,
-      rgb(0 0 0 / 0.7) 100%
+      transparent var(--seam),
+      rgb(var(--scene-dark) / 0.3) calc(var(--seam) + var(--cover-h) * 0.3),
+      rgb(var(--scene-dark) / 0.7) calc(50% + var(--seam) / 2 + var(--cover-h) * 0.15),
+      rgb(var(--scene-dark)) 100%
     );
+    pointer-events: none;
   }
 
-  /* Màn hình cao hơn nội dung: nền mặt đường giãn ra lấp kín tới Footnote */
-  main:has(.access-road) {
+  /* Nội dung (Mua ngay, ô nhập mã) nằm trên nền; màn hình cao hơn nội dung thì nền giãn ra lấp kín tới Footnote */
+  .access-road {
+    position: relative;
+    z-index: 1;
+    flex: 1;
+  }
+
+  /* Màn rộng: cột Mua ngay + ô nhập mã canh theo lề khối chữ trong bìa, để lộ trọn bóng phản chiếu của nhân vật */
+  @media (min-width: 1024px) {
+    .access-road {
+      width: min(40rem, 52cqw);
+      margin-left: calc(100cqw * var(--cover-text-x) - 2rem);
+    }
+  }
+
+  main:has(.access-scene) {
     display: flex;
     flex-direction: column;
-  }
-
-  .access-road {
-    flex: 1;
   }
 
   /* ---------- Thẻ vụ án (lưới ở Trang chủ và Hỗ trợ › Hồ sơ) ---------- */
