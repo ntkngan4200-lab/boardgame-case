@@ -38,7 +38,7 @@ export const guideImages = {
   q1Mobile: {
     src: q1Mobile,
     width: 750,
-    height: 2914,
+    height: 2900,
     alt: 'Trang câu hỏi trên điện thoại với các ô lựa chọn, nội dung được làm mờ',
   },
 }

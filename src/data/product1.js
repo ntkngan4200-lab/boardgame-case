@@ -1,8 +1,8 @@
-import bangTinImage from '../assets/evidence/bao-buon-lau.jpg'
-import cctvImage from '../assets/evidence/cctv-21g00.jpg'
-import ggMapsImage from '../assets/evidence/gg-maps.jpg'
-import nanNhanImage from '../assets/evidence/nan-nhan.jpg'
-import vatChungImage from '../assets/evidence/vat-chung.jpg'
+import bangTinImage from '../assets/evidence/bao-buon-lau.webp'
+import cctvImage from '../assets/evidence/cctv-21g00.webp'
+import ggMapsImage from '../assets/evidence/gg-maps.webp'
+import nanNhanImage from '../assets/evidence/nan-nhan.webp'
+import vatChungImage from '../assets/evidence/vat-chung.webp'
 
 // Product 1 — Vụ án Phạm Thùy Chi.
 // Mỗi câu hỏi có key "<product>/<objective>/<question>" khớp với URL.

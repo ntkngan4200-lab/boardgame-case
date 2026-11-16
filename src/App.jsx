@@ -1,17 +1,21 @@
+import { lazy } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import { RequireAccess } from './components/RequireAccess'
 import { SiteLayout } from './layouts/SiteLayout'
-import { AboutPage } from './pages/AboutPage'
-import { AccessPage } from './pages/AccessPage'
-import { ComingSoonPage } from './pages/ComingSoonPage'
-import { DocRequestPage } from './pages/DocRequestPage'
-import { FaqPage } from './pages/FaqPage'
-import { GuidePage } from './pages/GuidePage'
 import { HomePage } from './pages/HomePage'
-import { MissingDocsPage } from './pages/MissingDocsPage'
-import { ExplanationPage } from './pages/ExplanationPage'
-import { FalseAnswerPage } from './pages/FalseAnswerPage'
-import { QuestionPage } from './pages/QuestionPage'
+
+// Trang chủ tải ngay; các trang khác tách thành file riêng, chỉ tải khi mở tới
+const page = (load, name) => lazy(() => load().then((module) => ({ default: module[name] })))
+const AboutPage = page(() => import('./pages/AboutPage'), 'AboutPage')
+const AccessPage = page(() => import('./pages/AccessPage'), 'AccessPage')
+const ComingSoonPage = page(() => import('./pages/ComingSoonPage'), 'ComingSoonPage')
+const DocRequestPage = page(() => import('./pages/DocRequestPage'), 'DocRequestPage')
+const FaqPage = page(() => import('./pages/FaqPage'), 'FaqPage')
+const GuidePage = page(() => import('./pages/GuidePage'), 'GuidePage')
+const MissingDocsPage = page(() => import('./pages/MissingDocsPage'), 'MissingDocsPage')
+const ExplanationPage = page(() => import('./pages/ExplanationPage'), 'ExplanationPage')
+const FalseAnswerPage = page(() => import('./pages/FalseAnswerPage'), 'FalseAnswerPage')
+const QuestionPage = page(() => import('./pages/QuestionPage'), 'QuestionPage')
 
 export default function App() {
   return (

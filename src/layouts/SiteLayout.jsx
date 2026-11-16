@@ -1,4 +1,4 @@
-import { useLayoutEffect } from 'react'
+import { Suspense, useLayoutEffect } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import { SiteFootnote } from '../components/SiteFootnote'
 import { SiteHeader } from '../components/SiteHeader'
@@ -21,7 +21,10 @@ export function SiteLayout() {
       </a>
       <SiteHeader />
       <main id="noi-dung" className="flex-1">
-        <Outlet />
+        {/* Trang tách file riêng: header và Footnote hiện ngay trong lúc tải phần nội dung */}
+        <Suspense fallback={null}>
+          <Outlet />
+        </Suspense>
       </main>
       <SiteFootnote />
     </div>

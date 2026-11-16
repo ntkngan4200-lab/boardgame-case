@@ -25,22 +25,28 @@
     @apply font-body text-cream antialiased;
     /* Phòng điều tra dưới ánh đèn: sáng nhẹ ở giữa, tối dần ra mép */
     background-color: rgb(var(--tan));
+  }
+
+  /* Ánh đèn nằm ở lớp cố định riêng: cuộn trang không phải vẽ lại nền như background-attachment: fixed */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
     background-image:
       radial-gradient(110% 80% at 50% 30%, rgb(255 255 255 / 0.08) 0%, transparent 60%),
       radial-gradient(140% 120% at 50% 40%, transparent 50%, rgb(0 0 0 / 0.28) 100%);
-    background-attachment: fixed;
   }
 
-  /* Hạt giấy mờ phủ toàn trang */
+  /* Hạt giấy mờ phủ toàn trang: ô nhiễu dựng sẵn, hoà trộn thường để cuộn không phải hoà trộn lại cả trang */
   body::after {
     content: '';
     position: fixed;
     inset: 0;
     pointer-events: none;
     z-index: 50;
-    opacity: 0.07;
-    mix-blend-mode: overlay;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-image: url('../assets/grain.png');
   }
 
   /* Viền focus kem trên nền tối; đỏ thẫm trên tờ giấy và header; nâu đen trên Footnote */
@@ -56,6 +62,29 @@
 
   .site-footnote :focus-visible {
     outline-color: rgb(var(--tan));
+  }
+
+  /* Rê chuột, focus, đánh dấu: đổi màu chuyển nhẹ thay vì bật tức thì */
+  a,
+  button,
+  summary,
+  .option-box,
+  .site-search {
+    transition-property: color, background-color, border-color, text-decoration-color, box-shadow, opacity;
+    transition-duration: 150ms;
+    transition-timing-function: ease-out;
+  }
+
+  /* Người dùng bật "giảm chuyển động" trong máy: tắt mọi chuyển tiếp */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
 
@@ -357,11 +386,19 @@
     color: rgb(var(--maroon) / 0.5);
   }
 
+  /* Nới vùng bấm của nút kính lúp ra quá viền tròn */
+  .site-search__button::after {
+    content: '';
+    position: absolute;
+    inset: -0.25rem;
+  }
+
   .site-search__input::-webkit-search-cancel-button {
     display: none;
   }
 
   .site-search__button {
+    position: relative;
     display: grid;
     place-items: center;
     width: 2.5rem;
@@ -543,8 +580,10 @@
   .site-footnote {
     position: relative;
     z-index: 20;
+    /* Nâu đen sẫm hơn --tan một chút để chữ trên xám rêu đạt tương phản 4.5:1 */
+    --footnote-ink: 34 0 0; /* #220000 */
     background-color: rgb(var(--sage));
-    color: rgb(var(--tan));
+    color: rgb(var(--footnote-ink));
   }
 
   .footnote-heading {
@@ -552,23 +591,31 @@
     font-size: 1.5rem;
     letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: rgb(var(--tan));
+    color: rgb(var(--footnote-ink));
   }
 
   .footnote-link {
-    color: rgb(var(--tan));
+    position: relative;
+    color: rgb(var(--footnote-ink));
     font-size: 1.05rem;
+  }
+
+  /* Nới vùng bấm trên điện thoại mà không đổi khoảng cách dòng */
+  .footnote-link::after {
+    content: '';
+    position: absolute;
+    inset: -0.5rem -0.25rem;
   }
 
   .footnote-link:hover,
   .footnote-link:focus-visible {
-    color: rgb(var(--tan));
+    color: rgb(var(--footnote-ink));
     text-decoration: underline;
     text-underline-offset: 0.25em;
   }
 
   .footnote-text {
-    color: rgb(var(--tan));
+    color: rgb(var(--footnote-ink));
     font-size: 1.05rem;
   }
 
@@ -578,12 +625,12 @@
     width: 2.75rem;
     height: 2.75rem;
     border-radius: 9999px;
-    color: rgb(var(--tan));
+    color: rgb(var(--footnote-ink));
   }
 
   a.social-link:hover,
   a.social-link:focus-visible {
-    background-color: rgb(var(--tan) / 0.1);
+    background-color: rgb(var(--footnote-ink) / 0.1);
   }
 
   .social-link--pending {
