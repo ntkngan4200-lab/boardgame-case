@@ -19,6 +19,7 @@ export function RequireAccess() {
   // Sản phẩm chưa có Access Page thì để trang con tự xử lý (Sắp ra mắt)
   if (!access || allowed) return <Outlet />
 
-  // Mở thẳng link hoặc quét QR khi chưa nhập mã: sang trang Nhập mã, nhập đúng thì quay lại trang này
+  // Bấm link trong web tới trang chơi khi chưa nhập mã: sang trang Nhập mã, nhập đúng thì quay lại trang này.
+  // Mở thẳng link / quét QR thì redirectBlockedDeepLink (main.jsx) đã đổi URL trước khi React vẽ.
   return <Navigate to={`/${productId}/truy-cap`} replace state={{ from: location.pathname }} />
 }

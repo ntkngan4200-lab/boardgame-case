@@ -1,3 +1,6 @@
+import { matchPath } from 'react-router-dom'
+import { getAccessPage } from '../data/access'
+
 // Ghi nhớ mã truy cập đã nhập đúng trong phiên trình duyệt (mất khi đóng tab) để lưu tiến trình theo mã.
 // Chỉ là chặn phía trình duyệt cho trải nghiệm chơi, không phải bảo mật thật.
 const storageKey = (productId) => `kinh-lup:truy-cap:${productId}`
@@ -25,4 +28,14 @@ export function grantAccess(productId, session) {
   } catch {
     // Trình duyệt chặn sessionStorage: vẫn giữ quyền trong bộ nhớ tới khi tải lại trang
   }
+}
+
+// Mở thẳng link hoặc quét QR vào trang chơi (/p1/o1/q1, /p1/o2/giai-thich…) khi chưa nhập mã:
+// đổi URL sang trang Nhập mã TRƯỚC khi React vẽ lần đầu, để trang hiện một lần, không hiện khung trống rồi mới đổi trang.
+// Trang Nhập mã đọc state.from để quay lại đúng trang này sau khi nhập đúng mã (giống RequireAccess).
+export function redirectBlockedDeepLink() {
+  const match = matchPath('/:productId/:objectiveId/:page/*', window.location.pathname)
+  const productId = match?.params.productId
+  if (!productId || !getAccessPage(productId) || hasAccess(productId)) return
+  window.history.replaceState({ usr: { from: window.location.pathname } }, '', `/${productId}/truy-cap`)
 }
