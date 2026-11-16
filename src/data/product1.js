@@ -292,7 +292,7 @@ const explanations = {
           frame: 'polaroid',
           caption: 'Ảnh chụp màn hình điện thoại',
           // Kính lúp đặt dưới bên phải người phụ nữ, ra ngoài ảnh để không che dây chuyền; ring nhỏ = phóng to hơn
-          marks: [{ id: 'day-chuyen-le-tan', u: 0.747, v: 0.552, r: 0.06, ring: 0.02, lensAngle: 60, handleAngle: 50 }],
+          marks: [{ id: 'day-chuyen-le-tan', u: 0.772, v: 0.476, r: 0.06, ring: 0.02, lensAngle: 60, handleAngle: 50 }],
         },
         {
           id: 'vat-chung',
@@ -343,7 +343,7 @@ const explanations = {
     // Tờ ghi chú ghim trên bảng: kết luận điều tra
     note: {
       label: 'Kết luận điều tra',
-      text: 'Quá trình điều tra và đối chiếu các vật chứng thu thập được tại hiện trường đã xác định sợi dây chuyền do Phạm Thùy Chi nắm trong tay tại thời điểm rơi từ ban công thuộc sở hữu của Trần Chi Linh. Sự hiện diện của sợi dây chuyền này tại hiện trường là căn cứ quan trọng để xác định Trần Chi Linh chính là người đã tiếp xúc và gặp nạn nhân lần cuối trước khi xảy ra sự việc. Từ những tình tiết và chứng cứ thu thập được, cơ quan điều tra nhận định Trần Chi Linh là đối tượng cần được làm rõ, do đó tiến hành bắt giữ và lấy lời khai nhằm xác minh vai trò, mức độ liên quan của đối tượng, đồng thời làm sáng tỏ toàn bộ diễn biến vụ việc.',
+      text: 'Qua đối chiếu vật chứng, cơ quan điều tra xác định sợi dây chuyền Phạm Thùy Chi nắm trong tay thuộc sở hữu của Trần Chi Linh, cho thấy Linh là người cuối cùng tiếp xúc với nạn nhân. Từ đó, cơ quan điều tra tiến hành bắt giữ và lấy lời khai để làm rõ vai trò của Linh trong vụ việc.',
     },
     // Trang cuối của vụ án: nút về Trang chủ
     backTo: '/',
