@@ -3,10 +3,15 @@ import { useId } from 'react'
 // Bức tường bằng chứng: ảnh/tài liệu ghim trên bảng, khoanh đỏ chi tiết, phóng to bằng kính lúp và nối bằng dây chỉ đỏ.
 // Toạ độ chi tiết (mark) tính theo tỉ lệ ảnh (u = x / rộng, v = y / cao) nên đổi bố cục không phải đo lại.
 const RED = '#a8201a'
+// Màu nền giấy của ảnh bản tin, để lề giấy xé liền với ảnh
+const NEWSPRINT = '#f6f4f0'
 const FRAMES = {
   polaroid: { side: 12, top: 12, bottom: 46, captionAlign: 'middle', pin: true },
-  // Chú thích bản tin canh trái để dây đỏ đi xuống không cắt qua chữ
-  clipping: { side: 10, top: 10, bottom: 42, captionAlign: 'start' },
+  // Mẩu báo xé tay khỏi trang báo lớn: mép trên/dưới rách, lề giấy cùng màu nền bài báo để vết xé không cắt vào chữ,
+  // dán băng keo hai góc trên. Nhãn tên canh trái để dây đỏ đi xuống không cắt qua chữ
+  torn: { side: 0, top: 16, bottom: 16, captionAlign: 'start', torn: true, tape: true, label: true },
+  // Ảnh in ghim thẳng lên bảng, không viền; tên ghi trên nhãn giấy bên dưới
+  photo: { side: 0, top: 0, bottom: 0, captionAlign: 'middle', pin: true, label: true },
   // Trang tài liệu: ảnh chính là tờ giấy, không viền kem, không chú thích, ghim ở mép trên
   paper: { side: 0, top: 0, bottom: 0, captionAlign: 'middle', pin: true },
 }
@@ -40,6 +45,7 @@ function WallBoard({ wall, layout, className }) {
   const uid = useId().replace(/[^a-zA-Z0-9]/g, '')
   const items = wall.items.map((item) => placeItem(item, layout))
   const lenses = new Map(items.flatMap((item) => item.marks.map((mark) => [mark.id, mark.globalLens])))
+  const strings = layoutStrings(wall.strings, lenses)
 
   return (
     <div className={className}>
@@ -58,6 +64,11 @@ function WallBoard({ wall, layout, className }) {
             <feTurbulence type="fractalNoise" baseFrequency=".55" numOctaves="2" seed="4" />
             <feDisplacementMap in="SourceGraphic" scale="2.6" xChannelSelector="R" yChannelSelector="G" />
           </filter>
+          {/* Xơ giấy ở mép xé: nhiễu mịn làm nhoè nhẹ viền trắng, không thành răng cưa */}
+          <filter id={`${uid}-fiber`} filterUnits="userSpaceOnUse" x="0" y="0" width={layout.width} height={layout.height}>
+            <feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed="9" />
+            <feDisplacementMap in="SourceGraphic" scale="1.8" xChannelSelector="R" yChannelSelector="G" />
+          </filter>
           <radialGradient id={`${uid}-light`} cx="50%" cy="38%" r="70%">
             <stop offset="0" stopColor="#fff" stopOpacity=".1" />
             <stop offset="1" stopColor="#000" stopOpacity=".35" />
@@ -71,15 +82,19 @@ function WallBoard({ wall, layout, className }) {
 
         {items.map((item) => (
           <g key={item.id} transform={item.transform}>
-            <rect
-              x={item.frameX}
-              y={item.frameY}
-              width={item.frameW}
-              height={item.frameH}
-              rx="2"
-              style={{ fill: 'rgb(var(--cream))' }}
-              filter={`url(#${uid}-lift)`}
-            />
+            {item.frame.torn ? (
+              <TornPaper uid={uid} item={item} />
+            ) : (
+              <rect
+                x={item.frameX}
+                y={item.frameY}
+                width={item.frameW}
+                height={item.frameH}
+                rx="2"
+                style={{ fill: 'rgb(var(--cream))' }}
+                filter={`url(#${uid}-lift)`}
+              />
+            )}
             <image
               href={item.src}
               x={item.x}
@@ -88,8 +103,10 @@ function WallBoard({ wall, layout, className }) {
               height={item.h}
               preserveAspectRatio="xMidYMid slice"
             />
-            <rect x={item.x} y={item.y} width={item.w} height={item.h} fill="none" stroke="#000" strokeOpacity=".15" />
-            {item.caption ? (
+            {item.frame.torn ? null : (
+              <rect x={item.x} y={item.y} width={item.w} height={item.h} fill="none" stroke="#000" strokeOpacity=".15" />
+            )}
+            {item.caption && !item.frame.label ? (
               <text
               x={item.frame.captionAlign === 'start' ? item.x + 4 : item.cx}
               y={item.y + item.h + item.frame.bottom / 2 + layout.captionSize * 0.36}
@@ -102,7 +119,8 @@ function WallBoard({ wall, layout, className }) {
               {item.caption}
               </text>
             ) : null}
-            {item.frameType === 'clipping' ? <ClippingTape item={item} /> : null}
+            {item.frame.tape ? <ClippingTape item={item} /> : null}
+            {item.caption && item.frame.label ? <CaptionLabel item={item} size={layout.captionSize} /> : null}
           </g>
         ))}
 
@@ -129,22 +147,21 @@ function WallBoard({ wall, layout, className }) {
         ))}
 
         {/* Chỉ đỏ nối các chi tiết đã phóng to */}
-        {wall.strings.map(([fromId, toId]) => {
-          const string = stringPath(lenses.get(fromId), lenses.get(toId))
-          return (
-            <g key={`${fromId}-${toId}`}>
-              <path d={string.d} fill="none" stroke="#000" strokeOpacity=".28" strokeWidth="2.6" transform="translate(0 4)" />
-              <g filter={`url(#${uid}-thread)`} fill="none" strokeLinecap="round">
-                <path d={string.d} stroke={RED} strokeWidth="2.4" />
-                {/* Vân xoắn của sợi chỉ: nét sáng và nét tối ngắt quãng, lệch pha nhau */}
-                <path d={string.d} stroke="#e48b80" strokeWidth="1" strokeOpacity=".7" strokeDasharray="2 3.5" />
-                <path d={string.d} stroke="#4a0b08" strokeWidth="1" strokeOpacity=".55" strokeDasharray="1.5 4" strokeDashoffset="2.5" />
-              </g>
-              <Pin x={string.start[0]} y={string.start[1]} r={5} />
-              <Pin x={string.end[0]} y={string.end[1]} r={5} />
+        {strings.map((string) => (
+          <g key={string.key}>
+            <path d={string.d} fill="none" stroke="#000" strokeOpacity=".28" strokeWidth="2.6" transform="translate(0 4)" />
+            <g filter={`url(#${uid}-thread)`} fill="none" strokeLinecap="round">
+              <path d={string.d} stroke={RED} strokeWidth="2.4" />
+              {/* Vân xoắn của sợi chỉ: nét sáng và nét tối ngắt quãng, lệch pha nhau */}
+              <path d={string.d} stroke="#e48b80" strokeWidth="1" strokeOpacity=".7" strokeDasharray="2 3.5" />
+              <path d={string.d} stroke="#4a0b08" strokeWidth="1" strokeOpacity=".55" strokeDasharray="1.5 4" strokeDashoffset="2.5" />
             </g>
-          )
-        })}
+          </g>
+        ))}
+        {/* Ghim ở hai đầu dây; điểm rẽ nhánh dùng chung một ghim */}
+        {stringPins(strings).map(([x, y]) => (
+          <Pin key={`${x}-${y}`} x={x} y={y} r={5} />
+        ))}
 
         {/* Ghim giữ ảnh */}
         {items
@@ -213,6 +230,81 @@ function Magnifier({ uid, item, mark }) {
         style={{ stroke: 'rgb(var(--blush))' }}
       />
       <circle cx={lens.x} cy={lens.y} r={lens.r * 0.93} fill="none" stroke="#000" strokeOpacity=".3" strokeWidth="1" />
+    </g>
+  )
+}
+
+// Mẩu báo xé: mép trên và dưới rách không đều, lộ viền xơ giấy trắng mảnh, mép trái phải thẳng theo cột báo
+function TornPaper({ uid, item }) {
+  const left = item.frameX
+  const right = item.frameX + item.frameW
+  const depth = item.frame.top * 0.6
+  const seed = item.w
+  const top = tearEdge(left, right, depth, seed)
+  const bottom = tearEdge(left, right, depth, seed + 17)
+  // Viền xơ: lớp trắng hơn nhô ra ngoài vết xé, dày mỏng thất thường, có đoạn không có
+  const rim = (index, offset) => Math.max(0, 2.6 * smoothNoise(index / 9, seed + offset) - 0.5)
+  const outline = (grow) =>
+    [
+      ...top.map(([x, dy], index) => [x, item.frameY + dy - grow(index, 3)]),
+      ...bottom.map(([x, dy], index) => [x, item.frameY + item.frameH - dy + grow(index, 8)]).reverse(),
+    ]
+      .map(([x, y], index) => `${index ? 'L' : 'M'}${x.toFixed(1)} ${y.toFixed(1)}`)
+      .join('') + 'Z'
+  return (
+    <g filter={`url(#${uid}-lift)`}>
+      <path d={outline(rim)} fill="#fdfcf9" filter={`url(#${uid}-fiber)`} />
+      <path d={outline(() => 0)} fill={NEWSPRINT} />
+    </g>
+  )
+}
+
+// Độ sâu vết xé dọc theo mép: nhiễu mượt hai tầng (đường lượn lớn + gợn nhỏ) và hơi xiên, không thành răng cưa
+function tearEdge(from, to, depth, seed) {
+  const step = 2.5
+  const count = Math.ceil((to - from) / step)
+  const slant = smoothNoise(seed, seed) - 0.5
+  return Array.from({ length: count + 1 }, (_, index) => {
+    const x = Math.min(from + index * step, to)
+    const wave = 0.78 * smoothNoise(x / 26, seed) + 0.22 * smoothNoise(x / 8, seed + 5)
+    const tilt = slant * 0.5 * ((x - from) / (to - from) - 0.5)
+    return [x, depth * Math.min(1, Math.max(0.05, wave + tilt))]
+  })
+}
+
+function smoothNoise(x, seed) {
+  const i = Math.floor(x)
+  const f = x - i
+  const t = f * f * (3 - 2 * f)
+  return lattice(i, seed) * (1 - t) + lattice(i + 1, seed) * t
+}
+
+function lattice(i, seed) {
+  const n = Math.sin(i * 127.1 + seed * 311.7) * 43758.5453
+  return n - Math.floor(n)
+}
+
+// Nhãn giấy ghi tên bằng chứng dán ngay dưới ảnh (bề rộng ước theo số ký tự của font Be Vietnam Pro đậm)
+function CaptionLabel({ item, size }) {
+  const width = item.caption.length * size * 0.6 + size * 1.6
+  const height = size * 2.1
+  const x = item.frame.captionAlign === 'start' ? item.frameX + size * 0.6 : item.cx - width / 2
+  const y = item.frameY + item.frameH + size * 0.7
+  return (
+    <g transform={`rotate(${item.frame.captionAlign === 'start' ? 1.2 : -1} ${x + width / 2} ${y + height / 2})`}>
+      <rect x={x + 1.5} y={y + 3} width={width} height={height} fill="#000" opacity=".3" />
+      <rect x={x} y={y} width={width} height={height} rx="1.5" style={{ fill: 'rgb(var(--cream))' }} />
+      <text
+        x={x + width / 2}
+        y={y + height / 2 + size * 0.36}
+        textAnchor="middle"
+        fontFamily="'Be Vietnam Pro', sans-serif"
+        fontWeight="700"
+        fontSize={size}
+        style={{ fill: 'rgb(var(--maroon))' }}
+      >
+        {item.caption}
+      </text>
     </g>
   )
 }
@@ -320,6 +412,27 @@ function scribbleCircle(cx, cy, r, seed = 0, aspect = 1) {
   return `M${points.join('L')}`
 }
 
+// Đầu dây là id chi tiết, hoặc { mid: [idA, idB] } = điểm giữa sợi dây nối A–B (dây rẽ nhánh từ đó).
+// Dây được nối theo thứ tự khai báo nên dây A–B phải đứng trước các nhánh rẽ từ nó.
+function layoutStrings(pairs, lenses) {
+  const byKey = new Map()
+  const anchor = (end) => (typeof end === 'string' ? lenses.get(end) : { ...byKey.get(end.mid.join('~')).mid, r: 0 })
+  const name = (end) => (typeof end === 'string' ? end : `giua(${end.mid.join('~')})`)
+  return pairs.map(([from, to]) => {
+    const string = { ...stringPath(anchor(from), anchor(to)), key: `${name(from)}~${name(to)}` }
+    byKey.set(string.key, string)
+    return string
+  })
+}
+
+function stringPins(strings) {
+  const pins = new Map()
+  for (const { start, end } of strings) {
+    for (const [x, y] of [start, end]) pins.set(`${x.toFixed(1)} ${y.toFixed(1)}`, [x, y])
+  }
+  return [...pins.values()]
+}
+
 // Dây căng giữa mép hai kính lúp (hoặc vòng khoanh nếu không dùng kính), võng nhẹ xuống dưới
 function stringPath(from, to) {
   const dx = to.x - from.x
@@ -334,5 +447,7 @@ function stringPath(from, to) {
   const d = `M${start.map((n) => n.toFixed(1)).join(' ')}Q${control.map((n) => n.toFixed(1)).join(' ')} ${end
     .map((n) => n.toFixed(1))
     .join(' ')}`
-  return { d, start, end }
+  // Điểm giữa đường cong (t = 0,5) để nhánh khác rẽ ra
+  const mid = { x: (start[0] + 2 * control[0] + end[0]) / 4, y: (start[1] + 2 * control[1] + end[1]) / 4 }
+  return { d, start, end, mid }
 }

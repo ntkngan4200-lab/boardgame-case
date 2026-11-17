@@ -185,17 +185,18 @@ const explanations = {
     conclusion: 'Ba bằng chứng trên đã chứng minh trực tiếp Phạm Thùy Chi đến Khách sạn Mai Hoa để buôn lậu',
     wall: {
       description:
-        'Bức tường bằng chứng: Bản tin ngày 10/10/2026, hai trang Biên bản Khám nghiệm Hiện trường (trang 2 ghim đè lên trang 1, chừa tiêu đề) và Ảnh trích xuất camera lúc 21g00. Chiếc nhẫn đỏ trên tay hai người đàn ông trong bản tin (nối với nhau), chiếc nhẫn đỏ số 2 trong ảnh vật chứng thu giữ ở trang 2 biên bản và chiếc nhẫn đỏ trên ngón tay người trong camera được khoanh đỏ, phóng to bằng kính lúp và nối với nhau bằng dây đỏ.',
+        'Bức tường bằng chứng: mẩu Bản tin ngày 10/10/2026 xé từ trang báo, hai trang Biên bản Khám nghiệm Hiện trường (trang 2 ghim đè lên trang 1, chừa tiêu đề) và Ảnh trích xuất camera lúc 21g00 ghim trên bảng. Chiếc nhẫn đỏ trên tay hai người đàn ông trong bản tin được khoanh đỏ, phóng to bằng kính lúp và nối với nhau bằng dây đỏ; từ giữa sợi dây này rẽ hai nhánh tới chiếc nhẫn đỏ số 2 trong ảnh vật chứng thu giữ ở trang 2 biên bản và chiếc nhẫn đỏ trên ngón tay người trong camera, cả hai cũng được khoanh, phóng to và nối thẳng với nhau.',
       items: [
         {
           id: 'bang-tin',
           src: bangTinImage,
           ratio: 1600 / 629,
-          frame: 'clipping',
+          frame: 'torn',
           caption: 'Bản tin ngày 10/10/2026',
           marks: [
-            { id: 'nhan-bao-1', u: 0.724, v: 0.765, r: 0.028, ring: 0.011, lensAngle: 120 },
-            { id: 'nhan-bao-2', u: 0.829, v: 0.774, r: 0.028, ring: 0.011, lensAngle: 60 },
+            // Hai kính lúp toả sang hai bên để dây nối giữa chúng đủ dài cho hai nhánh rẽ
+            { id: 'nhan-bao-1', u: 0.724, v: 0.765, r: 0.028, ring: 0.011, lensAngle: 130, handleAngle: 115 },
+            { id: 'nhan-bao-2', u: 0.829, v: 0.774, r: 0.028, ring: 0.011, lensAngle: 50 },
           ],
         },
         // Biên bản Khám nghiệm Hiện trường (Drive "Tài liệu chung/Hiện trường edited.pdf"): trang 1 nằm dưới, trang 2 ghim đè lên
@@ -212,47 +213,54 @@ const explanations = {
           id: 'cctv',
           src: cctvImage,
           ratio: 1240 / 827,
-          frame: 'polaroid',
+          frame: 'photo',
           caption: 'Ảnh trích xuất camera lúc 21g00',
           marks: [{ id: 'nhan-cctv', u: 0.5313, v: 0.423, r: 0.03, ring: 0.008, lensAngle: 15 }],
         },
       ],
-      // Hai nhẫn trong bản tin nối với nhau; kính bên phải nối sang biên bản (bên phải), kính bên trái nối xuống camera (bên trái) để dây không cắt nhau
+      // Hai nhẫn trong bản tin nối với nhau; dây tới biên bản và camera rẽ ra từ giữa sợi dây đó
       strings: [
         ['nhan-bao-1', 'nhan-bao-2'],
-        ['nhan-bao-2', 'nhan-vat-chung'],
-        ['nhan-bao-1', 'nhan-cctv'],
+        [{ mid: ['nhan-bao-1', 'nhan-bao-2'] }, 'nhan-vat-chung'],
+        [{ mid: ['nhan-bao-1', 'nhan-bao-2'] }, 'nhan-cctv'],
         ['nhan-vat-chung', 'nhan-cctv'],
       ],
       layouts: {
         wide: {
           width: 1000,
-          height: 760,
+          height: 830,
           captionSize: 14,
           strokeWidth: 2.4,
           minMarkRadius: 14,
           lensRadius: 46,
           lensGap: 30,
           place: {
-            'bang-tin': { x: 50, y: 50, w: 520, rotate: -1.5 },
-            'bien-ban-1': { x: 650, y: 60, w: 290, rotate: 1.5 },
-            'bien-ban-2': { x: 675, y: 180, w: 290, rotate: -1 },
-            cctv: { x: 120, y: 420, w: 380, rotate: 3 },
+            'bang-tin': { x: 110, y: 50, w: 520, rotate: -1.5 },
+            'bien-ban-1': { x: 650, y: 270, w: 290, rotate: 1.5 },
+            'bien-ban-2': { x: 675, y: 390, w: 290, rotate: -1 },
+            cctv: { x: 90, y: 470, w: 380, rotate: 2.5 },
           },
         },
         tall: {
           width: 600,
           height: 1420,
-          captionSize: 19,
+          captionSize: 17,
           strokeWidth: 3,
           minMarkRadius: 16,
           lensRadius: 56,
           lensGap: 34,
           place: {
-            'bang-tin': { x: 30, y: 56, w: 540, rotate: -1.5 },
-            'bien-ban-1': { x: 50, y: 370, w: 330, rotate: -1.5 },
-            'bien-ban-2': { x: 150, y: 500, w: 330, rotate: 1.5 },
-            cctv: { x: 110, y: 1040, w: 420, rotate: 2.5 },
+            // Điện thoại: hai kính lúp chụm hơn để không tràn mép bảng
+            'bang-tin': {
+              x: 24,
+              y: 56,
+              w: 540,
+              rotate: -1.5,
+              marks: { 'nhan-bao-1': { lensAngle: 120, handleAngle: 110 }, 'nhan-bao-2': { lensAngle: 50, handleAngle: 80 } },
+            },
+            'bien-ban-1': { x: 50, y: 400, w: 330, rotate: -1.5 },
+            'bien-ban-2': { x: 150, y: 530, w: 330, rotate: 1.5 },
+            cctv: { x: 110, y: 1060, w: 420, rotate: 2.5 },
           },
         },
       },
@@ -275,7 +283,7 @@ const explanations = {
     conclusion: 'Hai bằng chứng trên đã chứng minh Trần Chi Linh là hung thủ đã sát hại Phạm Thùy Chi',
     wall: {
       description:
-        'Bức tường bằng chứng: hai trang Biên bản Khám nghiệm Hiện trường (trang 2 ghim đè lên nửa dưới trang 1) và Ảnh chụp màn hình điện thoại. Sợi dây chuyền trong tay nạn nhân ở Ảnh hiện trường 1 (trang 1), toàn bộ sợi dây chuyền số 3 trong ảnh vật chứng thu giữ (trang 2) và toàn bộ sợi dây chuyền người phụ nữ đeo trên cổ trong ảnh chụp màn hình được khoanh đỏ, phóng to bằng kính lúp và nối với nhau bằng dây đỏ.',
+        'Bức tường bằng chứng: hai trang Biên bản Khám nghiệm Hiện trường (trang 2 ghim đè lên nửa dưới trang 1) và Ảnh chụp màn hình điện thoại ghim trên bảng. Sợi dây chuyền trong tay nạn nhân ở Ảnh hiện trường 1 (trang 1), toàn bộ sợi dây chuyền số 3 trong ảnh vật chứng thu giữ (trang 2) và toàn bộ sợi dây chuyền người phụ nữ đeo trên cổ trong ảnh chụp màn hình được khoanh đỏ, phóng to bằng kính lúp và nối với nhau bằng dây đỏ.',
       items: [
         // Biên bản Khám nghiệm Hiện trường (Drive "Tài liệu chung/Hiện trường edited.pdf"): trang 2 đè lên trang 1 nhưng chừa Ảnh hiện trường 1
         {
@@ -298,7 +306,7 @@ const explanations = {
           id: 'gg-maps',
           src: ggMapsImage,
           ratio: 1080 / 1920,
-          frame: 'polaroid',
+          frame: 'photo',
           caption: 'Ảnh chụp màn hình điện thoại',
           // Khoanh toàn bộ dây chuyền trên cổ người phụ nữ (từ gáy cổ áo tới mặt dây); kính lúp ra ngoài ảnh để không che dây chuyền
           marks: [{ id: 'day-chuyen-le-tan', u: 0.773, v: 0.462, r: 0.045, ring: 0.026, lensAngle: 60, handleAngle: 50 }],
