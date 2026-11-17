@@ -4,9 +4,11 @@ import { useId } from 'react'
 // Toạ độ chi tiết (mark) tính theo tỉ lệ ảnh (u = x / rộng, v = y / cao) nên đổi bố cục không phải đo lại.
 const RED = '#a8201a'
 const FRAMES = {
-  polaroid: { side: 12, top: 12, bottom: 46, captionAlign: 'middle' },
+  polaroid: { side: 12, top: 12, bottom: 46, captionAlign: 'middle', pin: true },
   // Chú thích bản tin canh trái để dây đỏ đi xuống không cắt qua chữ
   clipping: { side: 10, top: 10, bottom: 42, captionAlign: 'start' },
+  // Trang tài liệu: ảnh chính là tờ giấy, không viền kem, không chú thích, ghim ở mép trên
+  paper: { side: 0, top: 0, bottom: 0, captionAlign: 'middle', pin: true },
 }
 
 export function EvidenceWall({ wall, note, className = '' }) {
@@ -87,7 +89,8 @@ function WallBoard({ wall, layout, className }) {
               preserveAspectRatio="xMidYMid slice"
             />
             <rect x={item.x} y={item.y} width={item.w} height={item.h} fill="none" stroke="#000" strokeOpacity=".15" />
-            <text
+            {item.caption ? (
+              <text
               x={item.frame.captionAlign === 'start' ? item.x + 4 : item.cx}
               y={item.y + item.h + item.frame.bottom / 2 + layout.captionSize * 0.36}
               textAnchor={item.frame.captionAlign}
@@ -97,7 +100,8 @@ function WallBoard({ wall, layout, className }) {
               style={{ fill: 'rgb(var(--maroon))' }}
             >
               {item.caption}
-            </text>
+              </text>
+            ) : null}
             {item.frameType === 'clipping' ? <ClippingTape item={item} /> : null}
           </g>
         ))}
@@ -110,7 +114,7 @@ function WallBoard({ wall, layout, className }) {
                 {/* circle: false — không khoanh, chỉ giữ điểm ghim dây cạnh chi tiết */}
                 {mark.circle === false ? null : (
                   <path
-                    d={scribbleCircle(mark.x, mark.y, mark.r, mark.seed)}
+                    d={scribbleCircle(mark.x, mark.y, mark.r, mark.seed, mark.aspect)}
                     fill="none"
                     stroke={RED}
                     strokeWidth={layout.strokeWidth}
@@ -144,10 +148,10 @@ function WallBoard({ wall, layout, className }) {
 
         {/* Ghim giữ ảnh */}
         {items
-          .filter((item) => item.frameType === 'polaroid')
+          .filter((item) => item.frame.pin)
           .map((item) => {
-            const [x, y] = rotatePoint(item.cx, item.frameY + 14, item)
-            return <Pin key={item.id} x={x} y={y} r={10} />
+            const [x, y] = rotatePoint(item.cx, item.frameY + 10, item)
+            return <Pin key={item.id} x={x} y={y} r={6} />
           })}
       </svg>
     </div>
@@ -274,7 +278,7 @@ function placeItem(item, layout) {
     // Không có lensAngle: chi tiết đủ rõ, dây nối thẳng vào vòng khoanh
     if (mark.lensAngle === undefined) {
       const [gx, gy] = rotatePoint(x, y, placed)
-      return { id: mark.id, x, y, r, circle: mark.circle, lens: null, seed: index + w, globalLens: { x: gx, y: gy, r } }
+      return { id: mark.id, x, y, r, aspect: mark.aspect, circle: mark.circle, lens: null, seed: index + w, globalLens: { x: gx, y: gy, r } }
     }
     const lensR = layout.lensRadius
     const angle = (mark.lensAngle * Math.PI) / 180
@@ -289,7 +293,7 @@ function placeItem(item, layout) {
       zoom: (lensR * 0.5) / (mark.ring * w),
     }
     const [gx, gy] = rotatePoint(lens.x, lens.y, placed)
-    return { id: mark.id, u: mark.u, v: mark.v, x, y, r, lens, seed: index + w, globalLens: { x: gx, y: gy, r: lensR } }
+    return { id: mark.id, u: mark.u, v: mark.v, x, y, r, aspect: mark.aspect, lens, seed: index + w, globalLens: { x: gx, y: gy, r: lensR } }
   })
   return placed
 }
@@ -301,8 +305,9 @@ function rotatePoint(x, y, { cx, cy, rotate }) {
   return [cx + dx * Math.cos(angle) - dy * Math.sin(angle), cy + dx * Math.sin(angle) + dy * Math.cos(angle)]
 }
 
-// Vòng khoanh tay: méo nhẹ, nét bút vòng quá điểm đầu một đoạn và lệch dần ra ngoài như vẽ thật
-function scribbleCircle(cx, cy, r, seed = 0) {
+// Vòng khoanh tay: méo nhẹ, nét bút vòng quá điểm đầu một đoạn và lệch dần ra ngoài như vẽ thật.
+// aspect > 1 kéo dài vòng theo chiều dọc để khoanh trọn vật dài (vd. cả sợi dây chuyền)
+function scribbleCircle(cx, cy, r, seed = 0, aspect = 1) {
   const steps = 48
   const start = -2.2 + (seed % 7) * 0.35
   const sweep = Math.PI * 2 * 1.13
@@ -310,7 +315,7 @@ function scribbleCircle(cx, cy, r, seed = 0) {
     const t = start + (sweep * index) / steps
     const wobble = 1 + 0.045 * Math.sin(t * 2 + seed) + 0.03 * Math.sin(t * 3 + 1.7 * seed)
     const radius = r * wobble * (1 + (0.16 * index) / steps)
-    return `${(cx + radius * 1.08 * Math.cos(t)).toFixed(1)} ${(cy + radius * 0.94 * Math.sin(t)).toFixed(1)}`
+    return `${(cx + radius * 1.08 * Math.cos(t)).toFixed(1)} ${(cy + radius * 0.94 * aspect * Math.sin(t)).toFixed(1)}`
   })
   return `M${points.join('L')}`
 }
