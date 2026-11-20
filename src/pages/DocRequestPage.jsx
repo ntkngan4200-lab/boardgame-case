@@ -58,7 +58,9 @@ function DocRequestContent({ request }) {
                 <Question.Option key={option.id} option={option} />
               ))}
             </Question.Options>
-            <Question.Confirm />
+            <Question.Confirm>
+              <Question.SelectedCount />
+            </Question.Confirm>
           </DocRequestForm>
         </Question.Root>
       )}

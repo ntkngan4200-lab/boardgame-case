@@ -7,7 +7,8 @@ import reflection from '../assets/access/access-reflection.webp'
 // codeHashes = SHA-256 của "<productId>:<mã viết hoa>", tạo bằng:
 //   printf 'p1:3590' | shasum -a 256
 // Mã lấy từ Google Sheet "Code game" (50 bộ đầu). adminCodeHash: mã Admin, vào trang câu hỏi là đã điền sẵn đáp án.
-// finalPath: trang cuối của vụ án — mã đã chơi tới đây thì lần nhập mã sau bắt đầu lại từ Câu hỏi 1.
+// finalPath: trang cuối của vụ án — mã đã chơi tới đây thì lần nhập mã sau bắt đầu lại từ Câu hỏi 1; đồng hồ chơi dừng ở đây.
+// summaryPath: trang Tóm tắt sau trang cuối (thời gian chơi + so sánh với các nhóm khác).
 const accessPages = {
   p1: {
     productId: 'p1',
@@ -81,6 +82,7 @@ const accessPages = {
     adminCodeHash: 'd8d29ce91917f861eeb68a86562bb2c152bb0b713a86586d33ece39ef219bf8a',
     next: '/p1/o1/q1',
     finalPath: '/p1/o2/giai-thich',
+    summaryPath: '/p1/tom-tat',
     backTo: '/',
   },
 }

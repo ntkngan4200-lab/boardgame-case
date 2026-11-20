@@ -1,5 +1,5 @@
-// Dải title đỏ dùng chung cho mọi trang thuộc một giai đoạn
-export function CaseBand({ titleId, stage, heading }) {
+// Dải title đỏ dùng chung cho mọi trang thuộc một giai đoạn; children: dòng phụ ngay dưới tiêu đề
+export function CaseBand({ titleId, stage, heading, children }) {
   return (
     <section className="case-band px-4 py-12 text-center sm:px-8 sm:py-16">
       <PaperClip />
@@ -14,6 +14,7 @@ export function CaseBand({ titleId, stage, heading }) {
           <span className="sr-only">: </span>
           <span className="case-band__title block font-display text-cream">{heading}</span>
         </h1>
+        {children}
       </div>
     </section>
   )

@@ -12,6 +12,7 @@ import { MissingDocsPage } from './pages/MissingDocsPage'
 import { ExplanationPage } from './pages/ExplanationPage'
 import { FalseAnswerPage } from './pages/FalseAnswerPage'
 import { QuestionPage } from './pages/QuestionPage'
+import { SummaryPage } from './pages/SummaryPage'
 
 // Mọi trang gộp trong một file JS: mở thẳng link thì cả trang hiện một lần, không hiện header/Footnote trước rồi chèn nội dung sau
 export default function App() {
@@ -31,6 +32,7 @@ export default function App() {
           <Route path=":productId/:objectiveId/giai-thich" element={<ExplanationPage />} />
           <Route path=":productId/:objectiveId/:questionId" element={<QuestionPage />} />
           <Route path=":productId/:objectiveId/:questionId/sai" element={<FalseAnswerPage />} />
+          <Route path=":productId/tom-tat" element={<SummaryPage />} />
         </Route>
         <Route path="*" element={<ComingSoonPage />} />
       </Route>

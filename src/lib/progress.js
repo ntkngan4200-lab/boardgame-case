@@ -3,14 +3,38 @@ import { getAccessSession } from './access'
 import { callBackend } from './backend'
 import { lookupLocation } from './location'
 
-// Tiến trình chơi theo mã truy cập: { path, pageLabel, selections: { [questionId]: optionIds }, finished, updatedAt }.
+// Tiến trình chơi theo mã truy cập: { path, pageLabel, selections: { [questionId]: optionIds }, finished, timing, updatedAt }.
 // Lưu ngay vào localStorage (mở lại nhanh trên thiết bị này) và gửi lên Apps Script để mở lại trên thiết bị khác.
 const localKey = (productId, code) => `kinh-lup:tien-trinh:${productId}:${code}`
 const cache = new Map()
+const listeners = new Set()
+const results = new Map()
 let saveTimer
 
+// Thời gian chơi tính liên tục từ lúc nhập mã, chỉ trừ các khoảng bấm Tạm dừng (quên tạm dừng thì vẫn tính).
+// Đồng hồ dừng hẳn khi tới trang cuối của vụ án (finalPath).
+// timing: { startedAt (cũng là mã lượt chơi), elapsed (ms đã cộng), lastAt (mốc đã cộng tới), pausedAt, stoppedAt }
+
 function emptyProgress() {
-  return { path: null, pageLabel: null, selections: {}, finished: false, updatedAt: 0 }
+  return { path: null, pageLabel: null, selections: {}, finished: false, timing: null, updatedAt: 0 }
+}
+
+function startTiming(now) {
+  return { startedAt: now, elapsed: 0, lastAt: now, pausedAt: null, stoppedAt: null }
+}
+
+// Cộng khoảng từ mốc trước tới bây giờ vào elapsed (đang tạm dừng hoặc đã dừng thì giữ nguyên)
+function tick(timing, now) {
+  if (!timing) return startTiming(now)
+  if (timing.pausedAt || timing.stoppedAt) return timing
+  return { ...timing, elapsed: playedTime(timing, now), lastAt: now }
+}
+
+// Thời gian chơi (ms) tính tới lúc now
+export function playedTime(timing, now = Date.now()) {
+  if (!timing) return 0
+  if (timing.pausedAt || timing.stoppedAt) return timing.elapsed
+  return timing.elapsed + Math.max(now - timing.lastAt, 0)
 }
 
 function readLocal(productId, code) {
@@ -38,12 +62,15 @@ function current(productId) {
   return { code: session.code, key, progress: cache.get(key) }
 }
 
+// Mỗi lần cập nhật tiến trình thì lưu luôn đồng hồ chơi tới lúc này (change.timing ghi đè nếu có)
 function update(productId, change) {
   const entry = current(productId)
   if (!entry) return
-  const progress = { ...entry.progress, ...change, updatedAt: Date.now() }
+  const now = Date.now()
+  const progress = { ...entry.progress, timing: tick(entry.progress.timing, now), ...change, updatedAt: now }
   cache.set(entry.key, progress)
   writeLocal(productId, entry.code, progress)
+  listeners.forEach((listener) => listener())
   // Gộp các lần chọn liên tiếp thành một lần gửi
   clearTimeout(saveTimer)
   saveTimer = setTimeout(() => {
@@ -84,17 +111,85 @@ export async function openSession(access, code) {
   const local = readLocal(productId, code)
   const latest = (remote?.updatedAt ?? 0) > (local?.updatedAt ?? 0) ? remote : local
   const progress = !latest || latest.finished ? emptyProgress() : { ...emptyProgress(), ...latest }
+  // Lượt chơi mới (chưa chơi hoặc đã chơi xong) bắt đầu đồng hồ từ 0
+  progress.timing = tick(progress.timing, Date.now())
   cache.set(`${productId}:${code}`, progress)
+  listeners.forEach((listener) => listener())
   return progress.path ?? access.next
 }
 
 // Ghi trang đang chơi (gọi mỗi khi đổi trang trong vụ án). Trang Trả lời sai: lần sau mở lại chính câu hỏi đó.
+// Tới trang cuối của vụ án: dừng đồng hồ và gửi thời gian chơi lên máy chủ.
 export function recordVisit(access, pathname) {
   const path = pathname.replace(/\/sai$/, '')
   const pageLabel = describePlayPath(path)
   const entry = current(access.productId)
   if (!entry || !pageLabel || entry.progress.path === path) return
-  update(access.productId, { path, pageLabel, finished: entry.progress.finished || path === access.finalPath })
+  const now = Date.now()
+  const timing = tick(entry.progress.timing, now)
+  const finishing = path === access.finalPath && !timing.stoppedAt
+  update(access.productId, {
+    path,
+    pageLabel,
+    finished: entry.progress.finished || path === access.finalPath,
+    timing: finishing ? { ...timing, stoppedAt: now } : timing,
+  })
+  if (finishing) fetchPlayResult(access.productId).catch(() => {})
+}
+
+// Đồng hồ chơi của mã đang dùng (null khi chưa nhập mã); subscribeProgress báo mỗi khi tiến trình đổi
+export function getPlayTiming(productId) {
+  return current(productId)?.progress.timing ?? null
+}
+
+// Trang đang chơi dở của mã đang dùng (null khi chưa có)
+export function getProgressPath(productId) {
+  return current(productId)?.progress.path ?? null
+}
+
+export function subscribeProgress(listener) {
+  listeners.add(listener)
+  return () => listeners.delete(listener)
+}
+
+export function pausePlay(productId) {
+  const entry = current(productId)
+  if (!entry) return
+  const now = Date.now()
+  const timing = tick(entry.progress.timing, now)
+  if (timing.pausedAt || timing.stoppedAt) return
+  update(productId, { timing: { ...timing, pausedAt: now } })
+}
+
+// Bấm Tiếp tục: đồng hồ chạy lại từ lúc này, khoảng tạm dừng không được cộng
+export function resumePlay(productId) {
+  const timing = current(productId)?.progress.timing
+  if (!timing?.pausedAt) return
+  update(productId, { timing: { ...timing, pausedAt: null, lastAt: Date.now() } })
+}
+
+// Gửi thời gian của lượt chơi đã xong lên máy chủ (gửi lại cùng lượt thì máy chủ không ghi thêm).
+// Trả về { seconds, fasterThan, compared }: fasterThan = % lượt chơi khác chậm hơn, null khi chưa đủ dữ liệu so sánh.
+export function fetchPlayResult(productId) {
+  const entry = current(productId)
+  const timing = entry?.progress.timing
+  if (!timing?.stoppedAt) return Promise.reject(new Error('Lượt chơi chưa kết thúc'))
+  const key = `${entry.key}:${timing.startedAt}`
+  if (!results.has(key)) {
+    const request = lookupLocation().then((location) =>
+      callBackend('result', {
+        productId,
+        code: entry.code,
+        runId: timing.startedAt,
+        seconds: Math.round(timing.elapsed / 1000),
+        location,
+      }),
+    )
+    // Lỗi mạng: lần gọi sau (mở lại trang Tóm tắt) thử gửi lại
+    request.catch(() => results.delete(key))
+    results.set(key, request)
+  }
+  return results.get(key)
 }
 
 export function getSavedSelection(productId, questionId) {

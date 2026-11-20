@@ -353,11 +353,13 @@ const explanations = {
       label: 'Kết luận điều tra',
       text: 'Qua đối chiếu vật chứng, cơ quan điều tra xác định sợi dây chuyền Phạm Thùy Chi nắm trong tay thuộc sở hữu của Trần Chi Linh, cho thấy Linh là người cuối cùng tiếp xúc với nạn nhân. Từ đó, cơ quan điều tra tiến hành bắt giữ và lấy lời khai để làm rõ vai trò của Linh trong vụ việc.',
     },
-    // Trang cuối của vụ án: nút về Trang chủ
+    // Trang cuối của vụ án: nút về Trang chủ và nút sang trang Tóm tắt
     backTo: '/',
     backLabel: 'Về trang chủ',
     next: {
       text: 'Hãy mở phong bì Giai đoạn 3 để hoàn tất vụ án.',
+      to: '/p1/tom-tat',
+      label: 'Xem tóm tắt',
     },
   },
 }

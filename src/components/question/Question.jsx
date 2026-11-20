@@ -5,10 +5,24 @@ import { QuestionProvider, useQuestion } from './QuestionProvider'
 
 function QuestionTitle() {
   const {
-    meta: { question, titleId },
+    state: { selectedIds },
+    meta: { question, pick, titleId },
   } = useQuestion()
 
-  return <CaseBand titleId={titleId} stage={question.stage} heading={question.heading} />
+  return (
+    <CaseBand titleId={titleId} stage={question.stage} heading={question.heading}>
+      {/* Câu chọn nhiều bằng chứng: số cần chọn hiện ngay dưới tiêu đề, đầu trang */}
+      {pick > 1 ? (
+        <p className="pick-count mt-5">
+          Chọn {pick} bằng chứng
+          <span aria-hidden="true" className="pick-count__divider" />
+          <span className="tabular-nums">
+            Đã chọn {selectedIds.length}/{pick}
+          </span>
+        </p>
+      ) : null}
+    </CaseBand>
+  )
 }
 
 function QuestionForm({ children }) {
@@ -93,9 +107,10 @@ function QuestionOption({ option }) {
   )
 }
 
-function QuestionConfirm() {
+// children: dòng phụ phía trên hàng nút (vd. <Question.SelectedCount /> ở phiếu yêu cầu hồ sơ)
+function QuestionConfirm({ children }) {
   const {
-    state: { selectedIds, status },
+    state: { status },
     meta: { question, pick, minPick },
   } = useQuestion()
   const messageId = useId()
@@ -106,11 +121,7 @@ function QuestionConfirm() {
     <div className="mt-6 border-t border-maroon/20 pt-6">
       {/* Trạng thái nằm trên hàng nút để hai nút luôn cùng một hàng, kể cả màn hình hẹp */}
       <div className="flex flex-wrap items-baseline justify-center gap-x-4">
-        {pick > 1 ? (
-          <p className="mb-3 w-full text-center font-mono text-sm font-bold tabular-nums text-graphite">
-            Đã chọn {selectedIds.length}/{pick}
-          </p>
-        ) : null}
+        {children}
         <p
           id={messageId}
           aria-live="polite"
@@ -142,6 +153,21 @@ function QuestionConfirm() {
   )
 }
 
+function QuestionSelectedCount() {
+  const {
+    state: { selectedIds },
+    meta: { pick },
+  } = useQuestion()
+
+  if (pick < 2) return null
+
+  return (
+    <p className="mb-3 w-full text-center font-mono text-sm font-bold tabular-nums text-graphite">
+      Đã chọn {selectedIds.length}/{pick}
+    </p>
+  )
+}
+
 // Dấu X viết tay — nét chính + một nét mực mờ lệch nhẹ cho cảm giác bút thật
 function CrossMark() {
   return (
@@ -162,4 +188,5 @@ export const Question = {
   Options: QuestionOptions,
   Option: QuestionOption,
   Confirm: QuestionConfirm,
+  SelectedCount: QuestionSelectedCount,
 }
