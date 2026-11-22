@@ -60,8 +60,8 @@ export function SummaryPage() {
               <div className="hint-note mx-auto mt-8 max-w-md text-left">
                 <p className="font-display text-2xl tracking-wide text-maroon">Chia sẻ ngay!</p>
                 <p className="text-base leading-relaxed">
-                  15 thám tử đầu tiên khoe chiến tích với bạn bè và tag Kính Lúp vào sẽ nhận được voucher 5% cho sản phẩm
-                  sắp tới của Kính Lúp đấy.
+                  15 thám tử đầu tiên khoe chiến tích với bạn bè và tag Kính Lúp trên bất kỳ nền tảng nào sẽ nhận được
+                  voucher 5% cho sản phẩm tiếp theo của Kính Lúp đấy.
                 </p>
               </div>
               <p className="mx-auto mt-8 max-w-md text-balance border-t border-maroon/20 pt-5 text-sm leading-relaxed text-maroon/80">
