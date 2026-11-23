@@ -795,6 +795,48 @@
   }
 
   /* ---------- Access Page: ô nhập mã truy cập ---------- */
+  /* Tiếp tục / Chơi lại dưới ô mã truy cập */
+  .mode-switch {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    max-width: 26rem;
+    margin-inline: auto;
+  }
+
+  .mode-switch__option span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.9rem;
+    padding: 0.5rem 1rem;
+    border: 2px solid rgb(var(--maroon) / 0.35);
+    border-radius: 3px;
+    color: rgb(var(--maroon));
+    font-weight: 700;
+    cursor: pointer;
+    touch-action: manipulation;
+    transition:
+      background-color 160ms ease,
+      border-color 160ms ease,
+      color 160ms ease;
+  }
+
+  .mode-switch__option span:hover {
+    border-color: rgb(var(--maroon));
+  }
+
+  .mode-switch__option input:checked + span {
+    border-color: rgb(var(--maroon));
+    background-color: rgb(var(--maroon));
+    color: rgb(var(--cream));
+  }
+
+  .mode-switch__option input:focus-visible + span {
+    outline: 2px solid rgb(var(--maroon));
+    outline-offset: 3px;
+  }
+
   .code-input {
     display: block;
     width: 100%;

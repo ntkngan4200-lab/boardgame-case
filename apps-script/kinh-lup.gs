@@ -33,6 +33,7 @@ const LOG_HEADER = [
   'Tính vào thống kê',
 ]
 const FINISHED_PAGE = 'Hoàn thành vụ án'
+const REVIEW_PAGE = 'Xem lại tóm tắt'
 const DAY_SHADE = '#d9d9d9'
 const MAX_DOCUMENTS = 3
 const MAX_PROGRESS_LENGTH = 8000
@@ -41,8 +42,10 @@ const MAX_PROGRESS_LENGTH = 8000
 // Mỗi lượt được ghi một hàng riêng (mã được chuyển cho nhóm khác thì có thêm hàng mới, không ghi đè lượt cũ)
 // và đều được tính vào thống kê, trừ lượt của mã Admin.
 // Có thể tự thêm hàng vào tab của sản phẩm (vd. thời gian các buổi chơi thử): Thời gian chơi (giây) = số giây,
-// Tính vào thống kê = "Có".
+// Tính vào thống kê = "Có". Hàm themDuLieuMau thêm sẵn SAMPLE_COUNT lượt mẫu (mã "Mẫu"), xoaDuLieuMau xoá chúng đi.
 const MIN_COMPARE = 20
+const SAMPLE_CODE = 'Mẫu'
+const SAMPLE_COUNT = 20
 const MIN_RECORDED_SECONDS = 15 * 60
 const MAX_RESULT_SECONDS = 7 * 24 * 60 * 60
 
@@ -138,12 +141,15 @@ function handleDocRequest(request) {
   return { ok: true }
 }
 
-// Ghi lượt truy cập; trang đang chơi = trang đã lưu của mã (chơi xong hoặc chưa chơi thì là trang bắt đầu)
+// Ghi lượt truy cập; trang đang chơi = trang đã lưu của mã (chưa chơi hoặc bấm Chơi lại thì là trang bắt đầu,
+// đã phá xong mà bấm Tiếp tục thì là "Xem lại tóm tắt")
 function handleAccess(request) {
   const player = checkCode(request)
   if (!player) return { ok: false }
   const progress = readProgress(player)
-  const page = progress && !progress.finished && progress.pageLabel ? progress.pageLabel : text(request.startLabel, 80)
+  let page = text(request.startLabel, 80)
+  if (!request.restart && progress && progress.finished) page = REVIEW_PAGE
+  else if (!request.restart && progress && progress.pageLabel) page = progress.pageLabel
   const sheet = productSheet(player.productId)
   sheet.appendRow([new Date(), player.label, text(request.location, 120) || 'Không xác định', page])
   shadeDays(sheet)
@@ -189,11 +195,15 @@ function handleResult(request) {
       .filter((row) => row !== own && row[7] === 'Có' && Number(row[6]) > 0)
       .map((row) => Number(row[6]))
     const slower = others.filter((value) => value > ownSeconds).length
+    // Thời gian nhanh nhất / chậm nhất trong các lượt được so sánh, tính cả lượt này (hiện ở hai đầu thanh vị trí)
+    const all = others.concat(ownSeconds)
     return {
       ok: true,
       seconds: ownSeconds,
       compared: others.length,
       fasterThan: others.length >= MIN_COMPARE ? Math.round((slower / others.length) * 100) : null,
+      fastest: Math.min.apply(null, all),
+      slowest: Math.max.apply(null, all),
     }
   } finally {
     lock.releaseLock()
@@ -263,6 +273,41 @@ function guiThongKe() {
     body: sections.map((section) => section.summary).join('\n'),
     htmlBody: `<p>Dear team Kính Lúp,</p>${sections.map((section) => section.html).join('')}`,
   })
+}
+
+// Chạy tay một lần: thêm SAMPLE_COUNT lượt mẫu vào tab "Thời gian chơi - P1", thời gian ngẫu nhiên 50 phút – 2 giờ,
+// để trang Tóm tắt có dữ liệu so sánh ngay. Cột Thời gian để trống nên email thống kê hằng ngày không đếm các hàng này.
+// Đã có lượt mẫu thì không thêm nữa (chạy lại không bị nhân đôi).
+function themDuLieuMau() {
+  const sheet = productSheet('p1')
+  const hasSamples = sheet
+    .getDataRange()
+    .getValues()
+    .some((row) => row[1] === SAMPLE_CODE)
+  if (hasSamples) {
+    console.log('Tab đã có lượt mẫu, không thêm nữa.')
+    return
+  }
+  for (let index = 1; index <= SAMPLE_COUNT; index++) {
+    const seconds = Math.round((50 + Math.random() * 70) * 60)
+    sheet.appendRow(['', SAMPLE_CODE, '', 'Dữ liệu mẫu', `mau-${index}`, Math.round(seconds / 6) / 10, seconds, 'Có'])
+  }
+  console.log(`Đã thêm ${SAMPLE_COUNT} lượt mẫu.`)
+}
+
+// Chạy tay khi đã có đủ lượt chơi thật: xoá mọi hàng mã "Mẫu" trong tab "Thời gian chơi - P1"
+function xoaDuLieuMau() {
+  const sheet = productSheet('p1')
+  const values = sheet.getDataRange().getValues()
+  let removed = 0
+  // Xoá từ dưới lên để số thứ tự các hàng phía trên không bị dịch
+  for (let index = values.length - 1; index >= 1; index--) {
+    if (values[index][1] === SAMPLE_CODE) {
+      sheet.deleteRow(index + 1)
+      removed++
+    }
+  }
+  console.log(`Đã xoá ${removed} lượt mẫu.`)
 }
 
 // Chạy một lần sau khi dán script: tạo lịch gửi thống kê mỗi ngày lúc 8 giờ sáng và lịch tự đặt tên tab mới.

@@ -8,6 +8,20 @@ import { openSession } from '../lib/progress'
 import { verifyAccessCode } from '../lib/verifyAnswer'
 import { ComingSoonPage } from './ComingSoonPage'
 
+// Hai lựa chọn dưới ô nhập mã: mở lại tiến trình đã lưu của mã, hoặc bắt đầu lượt chơi mới (vd. mã được chuyển cho nhóm khác)
+const PLAY_MODES = [
+  {
+    value: 'continue',
+    label: 'Tiếp tục',
+    hint: 'Tiếp tục tại điểm đã tạm dừng. Nếu đã phá xong vụ án, bạn sẽ xem lại được thành tích của mình.',
+  },
+  {
+    value: 'restart',
+    label: 'Chơi lại',
+    hint: 'Bắt đầu lại từ Câu hỏi 1 Giai đoạn 1 và đồng hồ chơi tính lại từ đầu.',
+  },
+]
+
 export function AccessPage() {
   const { productId } = useParams()
   const access = getAccessPage(productId)
@@ -24,6 +38,7 @@ function AccessContent({ access }) {
   const inputId = useId()
   const messageId = useId()
   const [status, setStatus] = useState('idle')
+  const [mode, setMode] = useState('continue')
 
   async function handleSubmit(event) {
     event.preventDefault()
@@ -38,11 +53,13 @@ function AccessContent({ access }) {
       setStatus('wrong')
       return
     }
-    // Mở lại trang mã này đang chơi dở; chưa chơi thì về trang bị chặn (nếu có), không thì vào Câu hỏi 1
-    const resumePath = await openSession(access, session.code)
+    // Tiếp tục: mở lại trang mã này đang chơi dở (chưa chơi thì về trang bị chặn, nếu có, không thì vào Câu hỏi 1).
+    // Chơi lại: luôn bắt đầu từ Câu hỏi 1.
+    const resumePath = await openSession(access, session.code, mode)
     grantAccess(access.productId, session)
     const from = location.state?.from
-    const target = resumePath === access.next && from?.startsWith(`/${access.productId}/`) ? from : resumePath
+    const resumeBlocked = mode === 'continue' && resumePath === access.next && from?.startsWith(`/${access.productId}/`)
+    const target = resumeBlocked ? from : resumePath
     navigate(target, { replace: Boolean(from) })
   }
 
@@ -110,6 +127,27 @@ function AccessContent({ access }) {
                 {status === 'wrong' ? 'Mã truy cập không đúng. Hãy thử lại.' : ''}
                 {status === 'checking' ? 'Đang kiểm tra…' : ''}
               </p>
+              <fieldset className="mt-2">
+                <legend className="sr-only">Cách mở vụ án</legend>
+                <div className="mode-switch">
+                  {PLAY_MODES.map((option) => (
+                    <label key={option.value} className="mode-switch__option">
+                      <input
+                        type="radio"
+                        name="mode"
+                        value={option.value}
+                        checked={mode === option.value}
+                        onChange={() => setMode(option.value)}
+                        className="sr-only"
+                      />
+                      <span>{option.label}</span>
+                    </label>
+                  ))}
+                </div>
+                <p className="mt-3 min-h-10 text-balance text-center text-sm leading-relaxed text-maroon/80">
+                  {PLAY_MODES.find((option) => option.value === mode).hint}
+                </p>
+              </fieldset>
               <div className="mt-4 flex items-center justify-between gap-3 border-t border-maroon/20 pt-6">
                 <Link to={access.backTo} className="pill-button min-w-[7.5rem] px-5 sm:min-w-44 sm:px-8">
                   Trở lại

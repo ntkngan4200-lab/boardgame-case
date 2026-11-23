@@ -94,6 +94,16 @@ export function SummaryPage() {
   )
 }
 
+// Một đầu thanh vị trí: nhãn + thời gian của lượt chậm nhất / nhanh nhất
+function RankEnd({ label, seconds, align = 'left' }) {
+  return (
+    <p className={align === 'right' ? 'text-right' : 'text-left'}>
+      <span className="block font-mono text-xs font-bold uppercase tracking-[0.16em] text-maroon/60">{label}</span>
+      {seconds ? <span className="mt-1 block text-sm font-bold">{formatDuration(seconds * 1000)}</span> : null}
+    </p>
+  )
+}
+
 function Ranking({ result }) {
   if (result.status === 'loading') {
     return (
@@ -128,11 +138,10 @@ function Ranking({ result }) {
         <span className="summary-rank__fill" style={{ width: `${result.fasterThan}%` }} />
         <span className="summary-rank__mark" style={{ left: `${result.fasterThan}%` }} />
       </div>
-      <p className="mt-2 flex justify-between font-mono text-xs font-bold uppercase tracking-[0.16em] text-maroon/60">
-        <span>Chậm nhất</span>
-        <span>Nhanh nhất</span>
-      </p>
-      <p className="mt-3 text-sm text-maroon/70">So với {result.compared} nhóm đã phá xong vụ án.</p>
+      <div className="mt-2 flex justify-between gap-4">
+        <RankEnd label="Chậm nhất" seconds={result.slowest} />
+        <RankEnd label="Nhanh nhất" seconds={result.fastest} align="right" />
+      </div>
     </div>
   )
 }

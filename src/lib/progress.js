@@ -69,12 +69,16 @@ function update(productId, change) {
   const now = Date.now()
   const progress = { ...entry.progress, timing: tick(entry.progress.timing, now), ...change, updatedAt: now }
   cache.set(entry.key, progress)
-  writeLocal(productId, entry.code, progress)
   listeners.forEach((listener) => listener())
+  save(productId, entry.code, progress)
+}
+
+function save(productId, code, progress) {
+  writeLocal(productId, code, progress)
   // Gộp các lần chọn liên tiếp thành một lần gửi
   clearTimeout(saveTimer)
   saveTimer = setTimeout(() => {
-    callBackend('progress', { productId, code: entry.code, progress }, { keepalive: true }).catch((error) =>
+    callBackend('progress', { productId, code, progress }, { keepalive: true }).catch((error) =>
       console.warn('[Kính Lúp] Chưa lưu được tiến trình lên máy chủ', error),
     )
   }, 600)
@@ -91,9 +95,11 @@ function describePlayPath(path) {
   return question ? `${question.stage} · Câu hỏi ${page.slice(1)}` : null
 }
 
-// Vừa nhập đúng mã: ghi lượt truy cập, lấy tiến trình mới nhất (máy chủ hoặc thiết bị này), trả về trang chơi tiếp.
-// Mã đã chơi tới trang cuối của vụ án thì bắt đầu lại từ Câu hỏi 1, xoá các lựa chọn cũ.
-export async function openSession(access, code) {
+// Vừa nhập đúng mã: ghi lượt truy cập, lấy tiến trình mới nhất (máy chủ hoặc thiết bị này), trả về trang sẽ mở.
+// mode 'continue': mở lại trang đang chơi dở; lượt đã phá xong thì mở trang Tóm tắt để xem lại.
+// mode 'restart': lượt chơi mới từ Câu hỏi 1, xoá các lựa chọn cũ, đồng hồ về 0 (vd. mã được chuyển cho nhóm khác).
+export async function openSession(access, code, mode = 'continue') {
+  const restart = mode === 'restart'
   const { productId } = access
   let remote = null
   try {
@@ -102,6 +108,7 @@ export async function openSession(access, code) {
       code,
       location: await lookupLocation(),
       startLabel: describePlayPath(access.next),
+      restart,
     })
     remote = result.progress
   } catch (error) {
@@ -110,11 +117,15 @@ export async function openSession(access, code) {
   }
   const local = readLocal(productId, code)
   const latest = (remote?.updatedAt ?? 0) > (local?.updatedAt ?? 0) ? remote : local
-  const progress = !latest || latest.finished ? emptyProgress() : { ...emptyProgress(), ...latest }
-  // Lượt chơi mới (chưa chơi hoặc đã chơi xong) bắt đầu đồng hồ từ 0
-  progress.timing = tick(progress.timing, Date.now())
+  const now = Date.now()
+  const progress = restart || !latest ? emptyProgress() : { ...emptyProgress(), ...latest }
+  // Lượt chơi mới bắt đầu đồng hồ từ 0; lượt đã phá xong giữ nguyên thời gian đã dừng
+  if (!progress.finished) progress.timing = tick(progress.timing, now)
   cache.set(`${productId}:${code}`, progress)
   listeners.forEach((listener) => listener())
+  // Chơi lại: ghi đè tiến trình cũ ngay, thiết bị khác nhập mã cũng thấy lượt mới
+  if (restart) save(productId, code, { ...progress, updatedAt: now })
+  if (progress.finished && progress.timing?.stoppedAt) return access.summaryPath
   return progress.path ?? access.next
 }
 
