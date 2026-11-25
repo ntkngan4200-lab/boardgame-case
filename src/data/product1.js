@@ -8,7 +8,6 @@ import ggMapsImage from '../assets/evidence/gg-maps.webp'
 // Mỗi câu hỏi có key "<product>/<objective>/<question>" khớp với URL.
 // pick: số lựa chọn người chơi phải đánh dấu (mặc định 1).
 // answerHash = SHA-256 của "<id>:<các optionId đúng, sắp xếp, nối bằng dấu phẩy>", tạo bằng:
-//   printf '%s' 'p1-o1-q1:buon-lau' | shasum -a 256
 //   printf '%s' 'p1-o1-q2:tl-03,tl-05,tl-23' | shasum -a 256
 //   printf '%s' 'p1-o2-q2:tl-05,tl-27' | shasum -a 256
 
@@ -62,19 +61,57 @@ const questions = {
     id: 'p1-o1-q1',
     stage: 'Giai đoạn 1',
     heading: 'Mục đích Phạm Thùy Chi đến Khách sạn Mai Hoa',
-    options: [
-      { id: 'lam-gai', label: 'Làm gái' },
-      { id: 'hen-ho', label: 'Hẹn hò' },
-      { id: 'buon-lau', label: 'Buôn lậu' },
-      { id: 'vuot-bien', label: 'Vượt biên' },
-      { id: 'tham-gia-dinh', label: 'Thăm gia đình' },
-      { id: 'nghi-duong', label: 'Nghỉ dưỡng' },
+    // Câu tự điền: các ô hiện lần lượt, ô sau chỉ hiện khi ô trước đã đúng; sai thì báo ngay dưới ô, không chuyển trang
+    type: 'text',
+    fields: [
+      {
+        id: 'muc-dich',
+        label: 'Mục đích là gì?',
+        // Đúng khi câu trả lời có chứa một cụm từ được chấp nhận (bỏ dấu, không phân biệt hoa thường),
+        // vd. buôn lậu, hàng lậu, hàng cấm, buôn bán trái phép, smuggling. Xem textAnswer.js để tạo thêm hash.
+        phraseHashes: [
+          'd9f008d532e55c56dd49b3344ab71fa6fe6f0365e80d76c247937a6a03d8cf11',
+          'd43d303cdaee02df3e87c0f3536742744dfa5d1812b607d21b2da1283d16bca6',
+          '267ae850d86481ee671db0fbcec4c1d2f5a50b223e3d95a8af64f37999556cc4',
+          '1cf21bc1d9e3d3e81aec4f486b0ebd69b42ad593e903b19804796ce170ff6ec7',
+          '1b9ce3a49a211517f00c40bddbecc6af0f0b4b9b63165c60c2e734de5cb5c323',
+          'fcb9dc9cb173dffc8859f65f95fea0baee1d8f1e03517b5c6823e2b1b6b7734e',
+          '8316dc1b127278ad044e9f0a237b95200c1c7874e51e49535a3859e8116bd5e4',
+          '4efe053d5394052c3d690db75c7604777e4143dcfc6a2b185c4cf0bf31d2b47c',
+          '679a06b5568bc681053fe0af10a1acd0cdb4784d0a78c54a4b06997cde555b47',
+          'fe8ae1ef604278868b750278aba3d2713dfbdf600df63098d731d8f867ba5489',
+          'f8d1ae6637f794f2994676f513f035a0f92c5ef4000d0eef2becd06f81f6947f',
+          '2a244e48f320251e0129c4658a8faf47f7f2db2c38b91e1df41cd8426c5904f5',
+          '0a8fe92e41655edd5a9cd916c644390ac6365ac928552c8745eac6193a0e8cad',
+          '50a880f6a6fc12911b69046e150fe399879ce7040e0f995dec1cb8ee95f3c600',
+          '3d6e7f5f63234ae0cb2945da4923e7d461b06da8f873cea785f501b7c2d19747',
+        ],
+        wrong: 'Phạm Thùy Chi không đến Khách sạn Mai Hoa với mục đích này. Hãy chú ý kỹ hơn đến các chi tiết được cung cấp.',
+      },
+      {
+        id: 'mat-hang',
+        label: 'Mặt hàng nào?',
+        // vd. thuốc lá điện tử, thuốc điện tử, vape, pod, e-cigarette
+        phraseHashes: [
+          'c573a71aafe4cb0215f80fd04887d49c4cbb6cb60f9de40733b98197eb7ade3e',
+          '4a935fd078140144ab158f7fa526066ea39ba758a76ca052fdd233b7528be757',
+          '4c07e0ef0cfead80be9686a8586d3f8cb6da2143afb26454bdbe2a76eeee1bbc',
+          '7ff7aa94c3823a4ed2960b8e636041fbc16e239c4dfc8a1f0731ea47ad29f7fe',
+          '6db57a7694b7b3cdd3e8833c46eefff35b3380833f3eca7594d8e828c3e8231a',
+          '26f20c4a76a48297e88604ef0a8a8da061d4e14bc639c260906329059205c049',
+          'e4f742ba331b9120f67ea6396e72c77f76eaf4b03c697068c3d79e764e8eca95',
+          'e0bcef7f33ae27d766d79dbbc34d67596f85ec99e0ad3b78d534e318c07b8d63',
+          'd36baf1f23efc08d9fb2d1b920ab48dce2ab3c23ba9da0facbf73d871a9360d7',
+          '4ab5da634632749e4903c2fe12656e78b78e1c49512aca1cf7dc9e28ea18a7e1',
+          '71c896da85f3b156c6a2cc563edfbb8e87d27583c31f41294905bf8af845dced',
+          'be0dbd2311f6fe02b766786a51d5fa038ca4addb7f0c1721bccb624fb085a231',
+        ],
+        wrong: 'Phạm Thùy Chi không buôn lậu mặt hàng này. Hãy chú ý kỹ hơn đến các chi tiết được cung cấp.',
+      },
     ],
-    answerHash: 'c0ce7f45e88d70ff2d00fae07c40bd3096fdc41415bf38e5f2ca5bdd59a9d0ed',
     backTo: '/p1/truy-cap',
     next: {
       correct: '/p1/o1/q2',
-      wrong: '/p1/o1/q1/sai',
     },
   },
   'p1/o1/q2': {
@@ -139,11 +176,6 @@ const questions = {
 // False Answer Page của từng câu hỏi (cùng key với câu hỏi).
 // hints: [] = không có gợi ý (ẩn nút Gợi ý); mỗi lần bấm "Gợi ý" mở thêm 1 mục theo thứ tự.
 const falseAnswers = {
-  'p1/o1/q1': {
-    claim:
-      'Phạm Thùy Chi không thật sự đến khách sạn vì lý do này. Hãy chú ý kỹ hơn đến các chi tiết được cung cấp.',
-    hints: [],
-  },
   'p1/o1/q2': {
     // Chọn theo số bằng chứng đúng; không biết số (mở trực tiếp trang) thì dùng "default"
     claims: {

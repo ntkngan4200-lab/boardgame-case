@@ -795,7 +795,7 @@
   }
 
   /* ---------- Access Page: ô nhập mã truy cập ---------- */
-  /* Tiếp tục / Chơi lại dưới ô mã truy cập */
+  /* Tiếp tục / Chơi mới dưới ô mã truy cập */
   .mode-switch {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -934,6 +934,20 @@
   }
 
   .code-input--email::placeholder {
+    letter-spacing: 0.01em;
+  }
+
+  /* Ô điền đáp án (câu tự điền): chữ thường như ô email */
+  .code-input--answer {
+    max-width: 28rem;
+    font-family: 'Be Vietnam Pro', system-ui, sans-serif;
+    font-size: 1.125rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    text-transform: none;
+  }
+
+  .code-input--answer::placeholder {
     letter-spacing: 0.01em;
   }
 

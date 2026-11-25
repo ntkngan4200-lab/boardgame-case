@@ -123,7 +123,7 @@ export async function openSession(access, code, mode = 'continue') {
   if (!progress.finished) progress.timing = tick(progress.timing, now)
   cache.set(`${productId}:${code}`, progress)
   listeners.forEach((listener) => listener())
-  // Chơi lại: ghi đè tiến trình cũ ngay, thiết bị khác nhập mã cũng thấy lượt mới
+  // Chơi mới: ghi đè tiến trình cũ ngay, thiết bị khác nhập mã cũng thấy lượt mới
   if (restart) save(productId, code, { ...progress, updatedAt: now })
   if (progress.finished && progress.timing?.stoppedAt) return access.summaryPath
   return progress.path ?? access.next

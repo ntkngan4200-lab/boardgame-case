@@ -17,7 +17,7 @@ const PLAY_MODES = [
   },
   {
     value: 'restart',
-    label: 'Chơi lại',
+    label: 'Chơi mới',
     hint: 'Bắt đầu lại từ Câu hỏi 1 Giai đoạn 1 và đồng hồ chơi tính lại từ đầu.',
   },
 ]
@@ -54,7 +54,7 @@ function AccessContent({ access }) {
       return
     }
     // Tiếp tục: mở lại trang mã này đang chơi dở (chưa chơi thì về trang bị chặn, nếu có, không thì vào Câu hỏi 1).
-    // Chơi lại: luôn bắt đầu từ Câu hỏi 1.
+    // Chơi mới: luôn bắt đầu từ Câu hỏi 1.
     const resumePath = await openSession(access, session.code, mode)
     grantAccess(access.productId, session)
     const from = location.state?.from

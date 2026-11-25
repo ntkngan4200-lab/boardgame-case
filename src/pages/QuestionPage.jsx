@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Question } from '../components/question/Question'
+import { TextQuestion } from '../components/question/TextQuestion'
 import { getQuestion } from '../data/product1'
 import { getAccessSession } from '../lib/access'
 import { getSavedSelection, saveSelection } from '../lib/progress'
@@ -30,9 +31,11 @@ export function QuestionPage() {
   const navigate = useNavigate()
   const question = getQuestion(productId, objectiveId, questionId)
   const admin = Boolean(getAccessSession(productId)?.admin)
-  const adminAnswer = useAdminAnswer(admin ? question : null)
+  // Câu tự điền không có danh sách lựa chọn để mã admin điền sẵn
+  const adminAnswer = useAdminAnswer(admin && question?.options ? question : null)
 
   if (!question) return <ComingSoonPage />
+  if (question.type === 'text') return <TextQuestion key={question.id} productId={productId} question={question} />
 
   // Lựa chọn đã lưu của mã truy cập (bỏ id không còn trong danh sách lựa chọn)
   const optionIds = new Set(question.options.map((option) => option.id))

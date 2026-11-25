@@ -141,7 +141,7 @@ function handleDocRequest(request) {
   return { ok: true }
 }
 
-// Ghi lượt truy cập; trang đang chơi = trang đã lưu của mã (chưa chơi hoặc bấm Chơi lại thì là trang bắt đầu,
+// Ghi lượt truy cập; trang đang chơi = trang đã lưu của mã (chưa chơi hoặc bấm Chơi mới thì là trang bắt đầu,
 // đã phá xong mà bấm Tiếp tục thì là "Xem lại tóm tắt")
 function handleAccess(request) {
   const player = checkCode(request)
