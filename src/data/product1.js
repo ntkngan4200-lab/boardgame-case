@@ -177,13 +177,7 @@ const questions = {
 // hints: [] = không có gợi ý (ẩn nút Gợi ý); mỗi lần bấm "Gợi ý" mở thêm 1 mục theo thứ tự.
 const falseAnswers = {
   'p1/o1/q2': {
-    // Chọn theo số bằng chứng đúng; không biết số (mở trực tiếp trang) thì dùng "default"
-    claims: {
-      0: 'Chưa có bằng chứng nào được chọn chứng minh trực tiếp mục đích Phạm Thùy Chi đến Khách sạn Mai Hoa. Hãy chú ý kỹ hơn đến các chi tiết được cung cấp.',
-      1: 'Chỉ 1/3 bằng chứng được chọn chứng minh trực tiếp mục đích Phạm Thùy Chi đến Khách sạn Mai Hoa. Hãy chú ý kỹ hơn đến các chi tiết được cung cấp.',
-      2: 'Chỉ 2/3 bằng chứng được chọn chứng minh trực tiếp mục đích Phạm Thùy Chi đến Khách sạn Mai Hoa. Hãy chú ý kỹ hơn đến các chi tiết được cung cấp.',
-      default: 'Hãy chú ý kỹ hơn đến các chi tiết được cung cấp.',
-    },
+    claim: 'Tổ hợp bằng chứng chưa chứng minh trực tiếp mục đích Phạm Thùy Chi đến Khách sạn Mai Hoa. Hãy chú ý kỹ hơn đến các chi tiết được cung cấp.',
     hints: [
       'Vật chứng thu giữ tại hiện trường có điểm gì bất thường?',
       'Tại sao Phạm Thùy Chi phải giữ một chiếc nhẫn bên trong túi váy?',
@@ -195,11 +189,7 @@ const falseAnswers = {
     hints: [],
   },
   'p1/o2/q2': {
-    claims: {
-      0: 'Chưa có bằng chứng nào được chọn chứng minh trực tiếp Trần Chi Linh là hung thủ đã sát hại Phạm Thùy Chi. Hãy chú ý kỹ hơn đến các chi tiết được cung cấp.',
-      1: 'Chỉ 1/2 bằng chứng được chọn chứng minh trực tiếp Trần Chi Linh là hung thủ đã sát hại Phạm Thùy Chi. Hãy chú ý kỹ hơn đến các chi tiết được cung cấp.',
-      default: 'Hãy chú ý kỹ hơn đến các chi tiết được cung cấp.',
-    },
+    claim: 'Tổ hợp bằng chứng chưa chứng minh trực tiếp Trần Chi Linh là hung thủ đã sát hại Phạm Thùy Chi. Hãy chú ý kỹ hơn đến các chi tiết được cung cấp.',
     hints: [
       'Ai là người có nhiều khả năng đã gặp nạn nhân cuối cùng?',
       'Tại sao Phạm Thùy Chi phải nắm chặt sợi dây chuyền trong giờ phút cuối cùng?',
