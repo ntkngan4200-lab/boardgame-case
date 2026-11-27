@@ -21,7 +21,7 @@ export function ExplanationPage() {
             <p className="text-balance text-center text-xl font-bold leading-snug sm:text-2xl">{page.conclusion}</p>
           </div>
 
-          {page.wall ? <EvidenceWall wall={page.wall} note={page.note} className="mt-10 sm:mt-12" /> : null}
+          {page.wall ? <EvidenceWall wall={page.wall} note={page.note} extra={page.extra} className="mt-10 sm:mt-12" /> : null}
 
           <div className="answer-sheet mx-auto mt-10 max-w-3xl px-5 py-8 sm:mt-12 sm:px-12 sm:py-10">
             <p className="text-balance text-center text-xl font-bold leading-snug sm:text-2xl">{page.next.text}</p>

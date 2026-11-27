@@ -14,9 +14,11 @@ const FRAMES = {
   photo: { side: 0, top: 0, bottom: 0, captionAlign: 'middle', pin: true, label: true },
   // Trang tài liệu: ảnh chính là tờ giấy, không viền kem, không chú thích, ghim ở mép trên
   paper: { side: 0, top: 0, bottom: 0, captionAlign: 'middle', pin: true },
+  // Thẻ ghi chú viết tay: vài dòng chữ trên giấy kem, mỗi dòng có thể làm đầu dây (item.lines)
+  card: { side: 0, top: 0, bottom: 0, captionAlign: 'start', pin: true },
 }
 
-export function EvidenceWall({ wall, note, className = '' }) {
+export function EvidenceWall({ wall, note, extra, className = '' }) {
   return (
     <figure className={`evidence-wall ${className}`}>
       {/* Ngang cho màn hình rộng, dọc cho điện thoại */}
@@ -24,8 +26,65 @@ export function EvidenceWall({ wall, note, className = '' }) {
       <WallBoard wall={wall} layout={wall.layouts.tall} className="md:hidden" />
       <figcaption className="sr-only">{wall.description}</figcaption>
       {note ? <WallNote note={note} /> : null}
+      {extra ? <WallExtra extra={extra} /> : null}
     </figure>
   )
+}
+
+// Bằng chứng nhỏ ghim dưới tờ kết luận: trích lời khai (đoạn gạch chân) → dây đỏ có mũi tên → thẻ nhận định,
+// kèm dòng nhật ký ghim ngay dưới thẻ. Dựng lại bằng chữ thật để đọc rõ trên điện thoại.
+function WallExtra({ extra }) {
+  const { excerpt, statement, log } = extra
+  return (
+    <div className="px-4 pb-10 sm:px-8 sm:pb-12">
+      <div className="mx-auto max-w-3xl">
+        <div className="wall-clip max-w-2xl">
+          <span aria-hidden="true" className="wall-note__pin" />
+          <p className="wall-clip__transcript">
+            <strong>HỎI:</strong> {excerpt.question}
+          </p>
+          <p className="wall-clip__transcript mt-2">
+            <strong>TRẢ LỜI:</strong> <Underline text={excerpt.answer} />
+          </p>
+        </div>
+        {/* Nhãn giấy tên bằng chứng dưới góc trái, cùng kiểu nhãn "Lời khai - Lê Văn Út" trên bảng */}
+        <p className="wall-caption">{excerpt.label}</p>
+
+        <div className="ml-auto mt-16 max-w-xl sm:mt-20">
+          <div className="wall-note px-6 py-5 sm:px-8 sm:py-6">
+            {/* Mũi tên bám theo thẻ: đuôi chạm mép dưới nhãn lời khai, đầu mũi tên chạm sát mép trái ghim đỏ của thẻ.
+                Đường cong co giãn theo khung (nét giữ nguyên độ dày), đầu mũi tên vẽ riêng để không bị méo */}
+            <span aria-hidden="true" className="wall-arrow">
+              <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="wall-arrow__line">
+                <path d="M2 0 C 4 70, 30 100, 97 100" vectorEffect="non-scaling-stroke" />
+              </svg>
+              <svg viewBox="0 0 20 20" className="wall-arrow__head">
+                <path d="M4 3 L 18 10 L 4 17" />
+              </svg>
+            </span>
+            <span aria-hidden="true" className="wall-note__pin" />
+            <p className="text-pretty text-lg font-semibold leading-snug sm:text-xl">{statement}</p>
+          </div>
+          <div className="wall-log mt-4">
+            <span aria-hidden="true" className="wall-log__tape" />
+            <p className="wall-log__label">{log.label}</p>
+            <ul className="wall-log__row">
+              {log.cells.map((cell, index) => (
+                <li key={index} className={log.strong.includes(index) ? 'font-bold text-black' : undefined}>
+                  {cell}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// __…__ = đoạn được gạch chân trong biên bản gốc
+function Underline({ text }) {
+  return text.split('__').map((part, index) => (index % 2 ? <u key={index} className="wall-clip__mark">{part}</u> : part))
 }
 
 // Tờ ghi chú giải thích ghim ngay trên bảng, dưới các bằng chứng
@@ -35,17 +94,58 @@ function WallNote({ note }) {
       <div className="wall-note mx-auto max-w-3xl px-6 pb-6 pt-8 sm:px-10 sm:pb-8 sm:pt-9">
         <span aria-hidden="true" className="wall-note__pin" />
         <p className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-graphite">{note.label}</p>
-        <p className="mt-2 text-pretty text-base font-semibold leading-relaxed sm:text-lg">{note.text}</p>
+        {note.lines ? (
+          <NoteLines lines={note.lines} />
+        ) : (
+          <p className="mt-2 text-pretty text-base font-semibold leading-relaxed sm:text-lg">{note.text}</p>
+        )}
       </div>
     </div>
   )
+}
+
+// note.lines: mỗi phần tử là một đoạn; bắt đầu bằng "- " là gạch đầu dòng, "→ " là dòng kết luận.
+// Chữ nằm giữa **…** được tô đậm, còn lại viết thường.
+function NoteLines({ lines }) {
+  const blocks = []
+  for (const line of lines) {
+    if (line.startsWith('- ')) {
+      const last = blocks.at(-1)
+      if (last?.type === 'list') last.items.push(line.slice(2))
+      else blocks.push({ type: 'list', items: [line.slice(2)] })
+    } else blocks.push({ type: line.startsWith('→ ') ? 'conclusion' : 'text', text: line })
+  }
+  return (
+    <div className="mt-3 space-y-2 text-pretty text-base leading-relaxed sm:text-lg">
+      {blocks.map((block, index) =>
+        block.type === 'list' ? (
+          <ul key={index} className="list-disc space-y-1 pl-6 marker:text-maroon/60">
+            {block.items.map((item) => (
+              <li key={item}>
+                <Emphasis text={item} />
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p key={index} className={block.type === 'conclusion' ? 'pt-1' : undefined}>
+            <Emphasis text={block.text} />
+          </p>
+        ),
+      )}
+    </div>
+  )
+}
+
+function Emphasis({ text }) {
+  return text.split('**').map((part, index) => (index % 2 ? <strong key={index}>{part}</strong> : part))
 }
 
 function WallBoard({ wall, layout, className }) {
   const uid = useId().replace(/[^a-zA-Z0-9]/g, '')
   const items = wall.items.map((item) => placeItem(item, layout))
   const lenses = new Map(items.flatMap((item) => item.marks.map((mark) => [mark.id, mark.globalLens])))
-  const strings = layoutStrings(wall.strings, lenses)
+  // Bố cục có thể nối dây khác (vd. điện thoại nối vào mép phải thẻ ghi chú thay vì mép trái)
+  const strings = layoutStrings(layout.strings ?? wall.strings, lenses)
 
   return (
     <div className={className}>
@@ -95,15 +195,18 @@ function WallBoard({ wall, layout, className }) {
                 filter={`url(#${uid}-lift)`}
               />
             )}
-            <image
-              href={item.src}
-              x={item.x}
-              y={item.y}
-              width={item.w}
-              height={item.h}
-              preserveAspectRatio="xMidYMid slice"
-            />
-            {item.frame.torn ? null : (
+            {item.src ? (
+              <image
+                href={item.src}
+                x={item.x}
+                y={item.y}
+                width={item.w}
+                height={item.h}
+                preserveAspectRatio="xMidYMid slice"
+              />
+            ) : null}
+            {item.lines ? <CardLines item={item} /> : null}
+            {item.frame.torn || item.lines ? null : (
               <rect x={item.x} y={item.y} width={item.w} height={item.h} fill="none" stroke="#000" strokeOpacity=".15" />
             )}
             {item.caption && !item.frame.label ? (
@@ -130,7 +233,16 @@ function WallBoard({ wall, layout, className }) {
             {item.marks.map((mark) => (
               <g key={mark.id}>
                 {/* circle: false — không khoanh, chỉ giữ điểm ghim dây cạnh chi tiết */}
-                {mark.circle === false ? null : (
+                {mark.circle === false ? null : mark.underline ? (
+                  // underline: gạch dưới đỏ dài 2r ngay dưới dòng chữ (thay cho vòng khoanh), như đoạn gạch chân trong lời khai
+                  <path
+                    d={`M${mark.x - mark.r} ${mark.y + 0.6}Q${mark.x} ${mark.y - 1.2} ${mark.x + mark.r} ${mark.y + 0.4}`}
+                    fill="none"
+                    stroke={RED}
+                    strokeWidth={layout.strokeWidth * 0.75}
+                    strokeLinecap="round"
+                  />
+                ) : (
                   <path
                     d={scribbleCircle(mark.x, mark.y, mark.r, mark.seed, mark.aspect)}
                     fill="none"
@@ -175,6 +287,35 @@ function WallBoard({ wall, layout, className }) {
   )
 }
 
+// Chữ trên thẻ ghi chú, mỗi dòng một hàng kẻ mờ
+function CardLines({ item }) {
+  return item.lines.map((line, index) => {
+    const y = item.y + item.pad + item.lineTops[index] + item.lineH
+    return (
+      <g key={line.text}>
+        <line
+          x1={item.x + item.pad * 0.6}
+          x2={item.x + item.w - item.pad * 0.6}
+          y1={y - item.lineH * 0.18}
+          y2={y - item.lineH * 0.18}
+          stroke="#000"
+          strokeOpacity=".1"
+        />
+        <text
+          x={item.x + item.pad}
+          y={y - item.lineH * 0.38}
+          fontFamily="'Be Vietnam Pro', sans-serif"
+          fontWeight="600"
+          fontSize={item.fontSize}
+          style={{ fill: 'rgb(var(--maroon))' }}
+        >
+          {line.text}
+        </text>
+      </g>
+    )
+  })
+}
+
 // Kính lúp đặt cạnh chi tiết: thấu kính hiển thị ảnh phóng to quanh chiếc nhẫn, cán hướng ra xa chi tiết
 function Magnifier({ uid, item, mark }) {
   const { lens } = mark
@@ -213,8 +354,8 @@ function Magnifier({ uid, item, mark }) {
       <circle cx={lens.x} cy={lens.y} r={lens.r} fill="#000" />
       <image
         href={item.src}
-        x={lens.x - mark.u * item.w * lens.zoom}
-        y={lens.y - mark.v * item.h * lens.zoom}
+        x={lens.x - (mark.lensU ?? mark.u) * item.w * lens.zoom}
+        y={lens.y - (mark.lensV ?? mark.v) * item.h * lens.zoom}
         width={item.w * lens.zoom}
         height={item.h * lens.zoom}
         preserveAspectRatio="none"
@@ -288,7 +429,14 @@ function lattice(i, seed) {
 function CaptionLabel({ item, size }) {
   const width = item.caption.length * size * 0.6 + size * 1.6
   const height = size * 2.1
-  const x = item.frame.captionAlign === 'start' ? item.frameX + size * 0.6 : item.cx - width / 2
+  const align = item.frame.captionAlign
+  // 'end': nhãn dán góc phải dưới ảnh (chừa chỗ cho kính lúp ở mép dưới bên trái)
+  const x =
+    align === 'start'
+      ? item.frameX + size * 0.6
+      : align === 'end'
+        ? item.frameX + item.frameW - width - size * 0.6
+        : item.cx - width / 2
   const y = item.frameY + item.frameH + size * 0.7
   return (
     <g transform={`rotate(${item.frame.captionAlign === 'start' ? 1.2 : -1} ${x + width / 2} ${y + height / 2})`}>
@@ -341,9 +489,12 @@ function Pin({ x, y, r }) {
 // Tính khung, tâm xoay, vị trí khoanh đỏ và kính lúp của một tài liệu trong bố cục (toạ độ cục bộ theo tài liệu)
 function placeItem(item, layout) {
   const place = layout.place[item.id]
-  const frame = FRAMES[item.frame]
+  // item.captionAlign: dời nhãn tên sang trái ('start') hoặc phải ('end') khi dây đỏ / kính lúp nằm ngay giữa mép dưới ảnh
+  const frame = { ...FRAMES[item.frame], ...(item.captionAlign ? { captionAlign: item.captionAlign } : {}) }
   const w = place.w
-  const h = w / item.ratio
+  // Thẻ ghi chú: cao theo số dòng chữ; mỗi dòng sinh điểm nối dây ở mép trái/phải (line.anchors)
+  const card = item.lines ? cardMetrics(item, layout) : null
+  const h = card ? card.h : w / item.ratio
   const placed = {
     ...item,
     frameType: item.frame,
@@ -357,20 +508,36 @@ function placeItem(item, layout) {
     frameY: place.y - frame.top,
     frameW: w + frame.side * 2,
     frameH: h + frame.top + frame.bottom,
+    ...card,
   }
   placed.cx = placed.frameX + placed.frameW / 2
   placed.cy = placed.frameY + placed.frameH / 2
   placed.transform = `rotate(${place.rotate} ${placed.cx} ${placed.cy})`
   // place.marks[id] cho phép bố cục đổi hướng kính lúp riêng (vd. lensAngle khác giữa wide và tall)
-  placed.marks = item.marks.map((baseMark, index) => {
+  const lineMarks = card
+    ? item.lines.flatMap((line, index) =>
+        // span: điểm nối nằm giữa `span` dòng liền nhau (vd. hai dòng cùng một ý)
+        (line.anchors ?? []).map(({ id, side, span = 1 }) => ({
+          id,
+          u: side === 'right' ? 1 : 0,
+          v: (card.pad + card.lineTops[index] + (span * card.lineH) / 2) / h,
+          circle: false,
+          pinR: 3,
+        })),
+      )
+    : []
+  placed.marks = [...(item.marks ?? []), ...lineMarks].map((baseMark, index) => {
     const mark = { ...baseMark, ...place.marks?.[baseMark.id] }
     const x = place.x + mark.u * w
     const y = place.y + mark.v * h
-    const r = Math.max(mark.r * w, layout.minMarkRadius)
+    // pinR: điểm nối nằm sát mép thẻ ghi chú, dây chạm ngay mép giấy
+    const r = mark.pinR ?? Math.max(mark.r * w, layout.minMarkRadius)
     // Không có lensAngle: chi tiết đủ rõ, dây nối thẳng vào vòng khoanh
     if (mark.lensAngle === undefined) {
-      const [gx, gy] = rotatePoint(x, y, placed)
-      return { id: mark.id, x, y, r, aspect: mark.aspect, circle: mark.circle, lens: null, seed: index + w, globalLens: { x: gx, y: gy, r } }
+      // anchorV: dời điểm nối dây (đinh ghim) xuống sát dưới đoạn gạch chân để không che chữ được gạch
+      const [gx, gy] = rotatePoint(x, mark.anchorV != null ? place.y + mark.anchorV * h : y, placed)
+      const anchorR = mark.underline ? 0 : r
+      return { id: mark.id, x, y, r, aspect: mark.aspect, circle: mark.circle, underline: mark.underline, lens: null, seed: index + w, globalLens: { x: gx, y: gy, r: anchorR, aspect: mark.aspect } }
     }
     const lensR = layout.lensRadius
     const angle = (mark.lensAngle * Math.PI) / 180
@@ -385,9 +552,25 @@ function placeItem(item, layout) {
       zoom: (lensR * 0.5) / (mark.ring * w),
     }
     const [gx, gy] = rotatePoint(lens.x, lens.y, placed)
-    return { id: mark.id, u: mark.u, v: mark.v, x, y, r, aspect: mark.aspect, lens, seed: index + w, globalLens: { x: gx, y: gy, r: lensR } }
+    // lensU/lensV: tâm vùng phóng to (mặc định = chi tiết), dời vào trong khi chi tiết sát mép ảnh để thấu kính không lộ nền đen
+    return { id: mark.id, u: mark.u, v: mark.v, lensU: mark.lensU, lensV: mark.lensV, x, y, r, aspect: mark.aspect, lens, seed: index + w, globalLens: { x: gx, y: gy, r: lensR } }
   })
   return placed
+}
+
+// line.gap: chừa thêm nửa dòng trống phía trên để tách nhóm ý (như dòng trống trong ghi chú gốc)
+function cardMetrics(item, layout) {
+  const fontSize = layout.cardFont
+  const lineH = fontSize * 1.55
+  const pad = fontSize * 0.9
+  let top = 0
+  const lineTops = item.lines.map((line) => {
+    top += line.gap ? lineH * 0.6 : 0
+    const lineTop = top
+    top += lineH
+    return lineTop
+  })
+  return { fontSize, lineH, pad, lineTops, h: pad * 2 + top }
 }
 
 function rotatePoint(x, y, { cx, cy, rotate }) {
@@ -414,12 +597,13 @@ function scribbleCircle(cx, cy, r, seed = 0, aspect = 1) {
 
 // Đầu dây là id chi tiết, hoặc { mid: [idA, idB] } = điểm giữa sợi dây nối A–B (dây rẽ nhánh từ đó).
 // Dây được nối theo thứ tự khai báo nên dây A–B phải đứng trước các nhánh rẽ từ nó.
+// Phần tử thứ ba { bend: [dx, dy] }: kéo điểm điều khiển của dây cong ra ngoài (vd. dây nối hai dòng cùng mép thẻ, dây vòng qua góc thẻ).
 function layoutStrings(pairs, lenses) {
   const byKey = new Map()
   const anchor = (end) => (typeof end === 'string' ? lenses.get(end) : { ...byKey.get(end.mid.join('~')).mid, r: 0 })
   const name = (end) => (typeof end === 'string' ? end : `giua(${end.mid.join('~')})`)
-  return pairs.map(([from, to]) => {
-    const string = { ...stringPath(anchor(from), anchor(to)), key: `${name(from)}~${name(to)}` }
+  return pairs.map(([from, to, options]) => {
+    const string = { ...stringPath(anchor(from), anchor(to), options?.bend), key: `${name(from)}~${name(to)}` }
     byKey.set(string.key, string)
     return string
   })
@@ -433,17 +617,28 @@ function stringPins(strings) {
   return [...pins.values()]
 }
 
+// Khoảng cách từ tâm tới mép vòng khoanh theo hướng (ux, uy); vòng bầu dục (aspect) dùng đúng bán kính ngang/dọc
+// như scribbleCircle để dây chạm ngay nét khoanh thay vì dừng ở ngoài
+function edgeDistance(anchor, ux, uy) {
+  if (!anchor.aspect || anchor.aspect === 1) return anchor.r
+  const rx = anchor.r * 1.08
+  const ry = anchor.r * 0.94 * anchor.aspect
+  return 1 / Math.hypot(ux / rx, uy / ry)
+}
+
 // Dây căng giữa mép hai kính lúp (hoặc vòng khoanh nếu không dùng kính), võng nhẹ xuống dưới
-function stringPath(from, to) {
+function stringPath(from, to, bend = [0, 0]) {
   const dx = to.x - from.x
   const dy = to.y - from.y
   const length = Math.hypot(dx, dy)
   const ux = dx / length
   const uy = dy / length
-  const start = [from.x + ux * from.r, from.y + uy * from.r]
-  const end = [to.x - ux * to.r, to.y - uy * to.r]
+  const startR = edgeDistance(from, ux, uy)
+  const endR = edgeDistance(to, ux, uy)
+  const start = [from.x + ux * startR, from.y + uy * startR]
+  const end = [to.x - ux * endR, to.y - uy * endR]
   const sag = Math.min(length * 0.06, 40)
-  const control = [(start[0] + end[0]) / 2, (start[1] + end[1]) / 2 + sag]
+  const control = [(start[0] + end[0]) / 2 + bend[0], (start[1] + end[1]) / 2 + sag + bend[1]]
   const d = `M${start.map((n) => n.toFixed(1)).join(' ')}Q${control.map((n) => n.toFixed(1)).join(' ')} ${end
     .map((n) => n.toFixed(1))
     .join(' ')}`

@@ -1,60 +1,64 @@
-import bangTinImage from '../assets/evidence/bao-buon-lau.webp'
-import bienBan1Image from '../assets/evidence/bien-ban-kham-nghiem-1.webp'
-import bienBan2Image from '../assets/evidence/bien-ban-kham-nghiem-2.webp'
-import cctvImage from '../assets/evidence/cctv-21g00.webp'
-import ggMapsImage from '../assets/evidence/gg-maps.webp'
+import cauThangImage from '../assets/evidence/cau-thang-dang-sua.webp'
+import cctvSanhImage from '../assets/evidence/cctv-sanh-21g00.webp'
+import cctvThangMayImage from '../assets/evidence/cctv-thang-may-22g00.jpg'
+import loiKhaiUtImage from '../assets/evidence/loi-khai-le-van-ut.jpg'
+import vatChungImage from '../assets/evidence/vat-chung.webp'
 
 // Product 1 — Vụ án Phạm Thùy Chi.
 // Mỗi câu hỏi có key "<product>/<objective>/<question>" khớp với URL.
 // pick: số lựa chọn người chơi phải đánh dấu (mặc định 1).
 // answerHash = SHA-256 của "<id>:<các optionId đúng, sắp xếp, nối bằng dấu phẩy>", tạo bằng:
-//   printf '%s' 'p1-o1-q2:tl-03,tl-05,tl-23' | shasum -a 256
-//   printf '%s' 'p1-o2-q2:tl-05,tl-27' | shasum -a 256
+//   printf '%s' 'p1-o1-q2:tl-03,tl-26' | shasum -a 256
+//   printf '%s' 'p1-o2-q2:tl-18,tl-25,tl-34' | shasum -a 256
 
-// "Danh mục tài liệu" (Drive › Web) — STT = vị trí trong danh sách
+// Google Sheet "Danh mục tài liệu" (Drive › Tài liệu vụ án Phạm Thùy Chi › Web), tab "Hồ sơ": STT = vị trí trong danh sách (bắt đầu từ 0).
+// STT 37–41 thuộc phong bì "Sự thật" nên không đưa lên web.
 const caseDocuments = [
   'Danh mục hồ sơ và vật chứng vụ án',
   'Chân dung nạn nhân Phạm Thùy Chi',
-  'Bản tin ngày 10/10/2026',
   'Kết luận Giám định Tử thi',
   'Biên bản Khám nghiệm Hiện trường',
   'Bản vẽ Mặt bằng Khách sạn Mai Hoa',
-  'Ảnh nhân chứng - Lê Văn Út',
+  'Bài báo ngày 03/10/2026',
+  'Bài báo ngày 04/10/2026',
+  'Bài báo ngày 06/10/2026',
+  'Bài báo ngày 10/10/2026',
+  'Ảnh nhận dạng nghi phạm - Lê Văn Út',
   'Ảnh nhận dạng nghi phạm - Vũ Văn Dũng',
-  'Ảnh nhận dạng nghi phạm - Bành Thu Cúc',
-  'Ảnh nhận dạng nghi phạm - Trần Trung Đức',
   'Ảnh nhận dạng nghi phạm - Trần Chi Linh',
+  'Ảnh nhận dạng nghi phạm - Bành Thu Cúc',
+  'Lý lịch cá nhân - Lê Văn Út',
   'Lý lịch cá nhân - Vũ Văn Dũng',
-  'Lý lịch cá nhân - Bành Thu Cúc',
   'Lý lịch cá nhân - Trần Trung Đức',
   'Lý lịch cá nhân - Trần Chi Linh',
+  'Lý lịch cá nhân - Bành Thu Cúc',
+  'Biên bản Lời khai - Lê Văn Út',
   'Biên bản Lời khai - Vũ Văn Dũng',
-  'Biên bản Lời khai - Bành Thu Cúc',
   'Biên bản Lời khai - Trần Trung Đức',
   'Biên bản Lời khai - Trần Chi Linh',
-  'Biên bản Lời khai Nhân chứng - Lê Văn Út',
-  'Ảnh vật chứng phụ - Bài thơ Trần Trung Đức viết cho Phạm Thùy Chi',
-  'Ảnh hiện trường 3 - Phòng 403 với nhiều hình ảnh của Phạm Thùy Chi',
-  'Ảnh trích xuất camera lúc 21g00 09/10/2026',
-  'Ảnh trích xuất từ camera lúc 21g30 09/10/2026',
-  'Thư gửi các thám tử - Giai đoạn 2',
-  'Record cuộc gọi từ bàn lễ tân',
-  'Ảnh chụp màn hình điện thoại của Phạm Thùy Chi',
-  'Thư gửi các thám tử - Giai đoạn 3',
-  'Biên bản Hỏi cung Bị can - Trần Chi Linh',
+  'Biên bản Lời khai - Bành Thu Cúc',
+  'Ảnh vật chứng - Bài thơ Trần Trung Đức viết cho Phạm Thùy Chi',
+  'Ảnh hiện trường phụ 1 - Phòng 405 với nhiều hình ảnh của Phạm Thùy Chi',
+  'Ảnh hiện trường phụ 2 - Cầu thang đang sửa chữa',
+  'Ảnh trích xuất camera - Sảnh 21g00 09/10/2026',
+  'Ảnh trích xuất camera - Sảnh 21g30 09/10/2026',
+  'Ảnh trích xuất camera - Thang máy 21g35 09/10/2026',
+  'Ảnh trích xuất camera - Thang máy 21g38 09/10/2026',
+  'Ảnh trích xuất camera - Thang máy 21g40 09/10/2026',
+  'Ảnh trích xuất camera - Thang máy 21g45 09/10/2026',
+  'Ảnh trích xuất camera - Thang máy 21g50 09/10/2026',
+  'Ảnh trích xuất camera - Thang máy 21g55 09/10/2026',
+  'Ảnh trích xuất camera - Thang máy 22g00 09/10/2026',
+  'Nhật ký ghi nhận cuộc gọi',
+  'Nhật ký truy cập thẻ từ',
 ]
 
-// Hồ sơ người chơi có trong tay tới STT maxNumber (mỗi giai đoạn mở thêm hồ sơ)
-function documentOptions(maxNumber) {
-  return caseDocuments.slice(0, maxNumber).map((label, index) => ({
-    id: `tl-${String(index + 1).padStart(2, '0')}`,
-    number: index + 1,
-    label,
-  }))
-}
-
-// Toàn bộ Danh mục hồ sơ (trang Hỗ trợ › Hồ sơ)
-export const caseDocumentOptions = documentOptions(caseDocuments.length)
+// id "tl-<STT 2 chữ số>", number = STT trong tab Hồ sơ. Hai giai đoạn dùng chung danh sách.
+export const caseDocumentOptions = caseDocuments.map((label, index) => ({
+  id: `tl-${String(index).padStart(2, '0')}`,
+  number: index,
+  label,
+}))
 
 const questions = {
   'p1/o1/q1': {
@@ -109,6 +113,20 @@ const questions = {
         wrong: 'Phạm Thùy Chi không buôn lậu mặt hàng này. Hãy chú ý kỹ hơn đến các chi tiết được cung cấp.',
       },
     ],
+    // Ô "Gợi ý (1)" luôn hiện dưới câu hỏi. Bấm vào phải trả lời đúng câu hỏi phụ mới mở được gợi ý.
+    // Đáp án câu hỏi phụ: dãy 12102006, 12 10 2006 (ký tự ngăn cách bất kỳ) hoặc KQ12102006, hash như phraseHashes với fieldId 'goi-y-1'.
+    hint: {
+      id: 'goi-y-1',
+      label: 'Dãy số nào trông giống ngày sinh nhưng không nằm trong các mục liên quan đến ngày sinh?',
+      phraseHashes: [
+        '4c93698da44dcd91495a4167a1e73dd6b98f5db60e802c5bba8cde27e9238ad7',
+        '0f64c64ced60573d8814d846532d8f736c5db9b2429d56770ca49daec931c04d',
+        // nguyên số seri trên tờ tiền: KQ12102006
+        'fd22e641b2652cf13ae1d26243d0f9d79617fec7493a665c2af937f2be545f68',
+      ],
+      wrong: 'Chưa chính xác. Hãy quan sát kỹ các dãy số trong vật chứng.',
+      text: 'Mục đích của các bài báo được cung cấp "ngẫu nhiên" trong bộ hồ sơ là gì? Hãy để ý đến ngày phát hành của các số báo đó.',
+    },
     backTo: '/p1/huong-dan',
     next: {
       correct: '/p1/o1/q2',
@@ -119,16 +137,15 @@ const questions = {
     stage: 'Giai đoạn 1',
     heading: 'Mục đích Phạm Thùy Chi đến Khách sạn Mai Hoa',
     backTo: '/p1/o1/q1',
-    prompt: 'Phạm Thùy Chi đến Khách sạn Mai Hoa để buôn lậu. Ba bằng chứng nào có thể chứng minh được việc đó?',
-    pick: 3,
-    options: documentOptions(24),
-    // Đúng: tl-03 (Bản tin) + tl-05 (Biên bản Khám nghiệm Hiện trường) + tl-23 (camera 21g00)
-    answerHash: '141809bbc25f5b68fdb3c9864fec622db83ed8229f615f2706cd25e0d488df2b',
+    prompt: 'Phạm Thùy Chi đến Khách sạn Mai Hoa để buôn lậu. Hai bằng chứng nào có thể chứng minh được việc đó?',
+    pick: 2,
+    options: caseDocumentOptions,
+    // Đúng: tl-03 (Biên bản Khám nghiệm Hiện trường) + tl-26 (camera Sảnh 21g00)
+    answerHash: '2c58ca75c196f65f7594325bc6cf6b24d01d770ec34d7e8cb45e8c7c3aea8c98',
     // Hash từng đáp án đúng ("<id>:<optionId>") để đếm số bằng chứng người chơi chọn đúng
     correctOptionHashes: [
       '1c133ea9dd4a3b7deb2054cfd8be9a2ba3e6b0f49a4727e75ccd9aeba3e82154',
-      '540ebaa1d758c6edf9ff70a9b5b993ee0e849df65fa4383e94add3446f42ee15',
-      'fa11ec72094bc0fec4a7eb1e79d003d429a4b1e2400e905599b37ee560d394fd',
+      '6a621b6eb0934ef797294f7565e929e7dde16c40ca99afcde28d7a013bb7e4aa',
     ],
     next: {
       correct: '/p1/o1/giai-thich',
@@ -157,14 +174,15 @@ const questions = {
     stage: 'Giai đoạn 2',
     heading: 'Hung thủ đã sát hại Phạm Thùy Chi',
     backTo: '/p1/o2/q1',
-    prompt: 'Hai bằng chứng nào có thể chứng minh Trần Chi Linh là hung thủ sát hại Phạm Thùy Chi?',
-    pick: 2,
-    options: documentOptions(27),
-    // Đúng: tl-05 (Biên bản Khám nghiệm Hiện trường) + tl-27 (Ảnh chụp màn hình điện thoại)
-    answerHashes: ['a0f715b420e2fbafbc564ee5fdfb28d318574cb4d7688ac6394c2821e4cca96a'],
+    prompt: 'Ba bằng chứng nào có thể chứng minh Trần Chi Linh là hung thủ sát hại Phạm Thùy Chi?',
+    pick: 3,
+    options: caseDocumentOptions,
+    // Đúng: tl-18 (Lời khai Lê Văn Út) + tl-25 (Cầu thang đang sửa chữa) + tl-34 (camera Thang máy 22g00)
+    answerHash: '3ac0450a1194e51cada364e17aaad36414abf9232e480992700e7601dea0a9ea',
     correctOptionHashes: [
-      'c9195088c3fd8be7349658f6646e4287dfe9f6fd32f947431a631aa1f93fca6c',
-      '116e272fac6688aea7fedd4f6ad26585bbf494e0b16cb479998118c66ff63e7e',
+      '74fdd2142a89721eac40917cb4f2fd5edbd5e76681c5cc08114e5747b5869541',
+      '2e1eb3e78eff9f5959aa5d2a47b45ae6e8eb568549d3a1151fa74c91a15c8529',
+      '04225c538c06b685bae6aabd5f0432fdb0eedc111debdf288b2a9dca718895da',
     ],
     next: {
       correct: '/p1/o2/giai-thich',
@@ -199,98 +217,123 @@ const falseAnswers = {
 
 // Explanation Page sau khi trả lời đúng câu cuối của mỗi giai đoạn (key "<product>/<objective>").
 // wall.items[].marks: chi tiết khoanh đỏ, u/v = vị trí theo tỉ lệ ảnh, r = bán kính theo bề rộng ảnh, aspect = kéo dọc vòng khoanh (mặc định 1).
-// wall.strings: cặp chi tiết được nối dây đỏ. layouts: wide (≥768px) và tall (điện thoại), đơn vị theo viewBox.
+// wall.strings: cặp chi tiết được nối dây đỏ. layouts: wide (≥768px) và tall (điện thoại), đơn vị theo viewBox; layout.strings thay cho wall.strings nếu có.
+// Thẻ ghi chú (frame 'card'): lines[].anchors = điểm nối dây ở mép trái/phải từng dòng; cardFont = cỡ chữ của bố cục.
 const explanations = {
   'p1/o1': {
     stage: 'Giai đoạn 1',
     heading: 'Mục đích Phạm Thùy Chi đến Khách sạn Mai Hoa',
-    conclusion: 'Ba bằng chứng trên đã chứng minh trực tiếp Phạm Thùy Chi đến Khách sạn Mai Hoa để buôn lậu',
+    conclusion: 'Hai bằng chứng trên đã chứng minh trực tiếp Phạm Thùy Chi đến Khách sạn Mai Hoa để buôn lậu',
+    // Theo Canva "Web" trang 24: ảnh vật chứng (Biên bản Khám nghiệm Hiện trường) + camera Sảnh 21g00,
+    // nội dung giải mã từ giấy ghi chú gom vào một tờ giải thích, dây đỏ nối chi tiết với dòng tương ứng
     wall: {
       description:
-        'Bức tường bằng chứng: mẩu Bản tin ngày 10/10/2026 xé từ trang báo, hai trang Biên bản Khám nghiệm Hiện trường (trang 2 ghim đè lên trang 1, chừa tiêu đề) và Ảnh trích xuất camera lúc 21g00 ghim trên bảng. Chiếc nhẫn đỏ trên tay hai người đàn ông trong bản tin được khoanh đỏ, phóng to bằng kính lúp và nối với nhau bằng dây đỏ; từ giữa sợi dây này rẽ hai nhánh tới chiếc nhẫn đỏ số 2 trong ảnh vật chứng thu giữ ở trang 2 biên bản và chiếc nhẫn đỏ trên ngón tay người trong camera, cả hai cũng được khoanh, phóng to và nối thẳng với nhau.',
+        'Bức tường bằng chứng: Ảnh vật chứng tại hiện trường 1 trong Biên bản Khám nghiệm Hiện trường và Ảnh trích xuất camera Sảnh lúc 21g00 ghim trên bảng. Nội dung giải mã giấy ghi chú số 3 được chép trên một tờ giải thích. Giấy ghi chú được khoanh đỏ và nối tới dòng "4 0 4 Mai Hoa, 21 giờ ngày 9 tháng 10"; chiếc nhẫn đỏ số 2 nối tới dòng "nhẫn đỏ"; bàn tay có hình xăm của người đàn ông trong camera nối tới dòng "từ hình xăm trên tay". Dòng "thuốc lá điện tử" nối với dòng "nhận 1 kiện hàng", và từ giữa sợi dây đó một nhánh nối xuống chiếc túi người đàn ông xách trong camera.',
       items: [
         {
-          id: 'bang-tin',
-          src: bangTinImage,
-          ratio: 1600 / 629,
-          frame: 'torn',
-          caption: 'Bản tin ngày 10/10/2026',
+          id: 'vat-chung',
+          src: vatChungImage,
+          ratio: 1600 / 982,
+          frame: 'photo',
+          caption: 'Ảnh vật chứng tại hiện trường 1',
           marks: [
-            // Hai kính lúp toả sang hai bên để dây nối giữa chúng đủ dài cho hai nhánh rẽ
-            { id: 'nhan-bao-1', u: 0.724, v: 0.765, r: 0.028, ring: 0.011, lensAngle: 130, handleAngle: 115 },
-            { id: 'nhan-bao-2', u: 0.829, v: 0.774, r: 0.028, ring: 0.011, lensAngle: 50 },
+            // Giấy ghi chú số 3: khoanh cả tờ (bầu dục ngang)
+            { id: 'giay-ghi-chu', u: 0.349, v: 0.717, r: 0.2, aspect: 0.8 },
+            { id: 'nhan-do', u: 0.093, v: 0.62, r: 0.045, ring: 0.035, lensAngle: 120 },
           ],
         },
-        // Biên bản Khám nghiệm Hiện trường (Drive "Tài liệu chung/Hiện trường edited.pdf"): trang 1 nằm dưới, trang 2 ghim đè lên
-        { id: 'bien-ban-1', src: bienBan1Image, ratio: 1600 / 2263, frame: 'paper', marks: [] },
         {
-          id: 'bien-ban-2',
-          src: bienBan2Image,
-          ratio: 1600 / 2263,
-          frame: 'paper',
-          // Chiếc nhẫn số 2 trong "Ảnh vật chứng thu giữ tại hiện trường 1" (ảnh chiếm u .50–.92, v .092–.273 của trang)
-          marks: [{ id: 'nhan-vat-chung', u: 0.5464, v: 0.2006, r: 0.03, ring: 0.017, lensAngle: 180 }],
+          // Một tờ giải thích gom toàn bộ nội dung giải mã từ giấy ghi chú
+          id: 'giai-ma',
+          frame: 'card',
+          lines: [
+            { text: '4 0 4 Mai Hoa', anchors: [{ id: 'dong-mai-hoa', side: 'left', span: 2 }] },
+            { text: '21 giờ ngày 9 tháng 10' },
+            { text: 'nhẫn đỏ', gap: true, anchors: [{ id: 'dong-nhan', side: 'left' }] },
+            { text: 'nhận 1 kiện hàng', anchors: [{ id: 'dong-kien-hang', side: 'right' }] },
+            {
+              text: 'từ hình xăm trên tay',
+              anchors: [
+                { id: 'dong-hinh-xam', side: 'left' },
+                { id: 'dong-hinh-xam-phai', side: 'right' },
+              ],
+            },
+            { text: 'thuốc lá điện tử', gap: true, anchors: [{ id: 'dong-thuoc-la', side: 'right' }] },
+          ],
         },
         {
-          id: 'cctv',
-          src: cctvImage,
+          id: 'cctv-sanh',
+          src: cctvSanhImage,
           ratio: 1240 / 827,
           frame: 'photo',
-          caption: 'Ảnh trích xuất camera lúc 21g00',
-          marks: [{ id: 'nhan-cctv', u: 0.5313, v: 0.423, r: 0.03, ring: 0.008, lensAngle: 15 }],
+          caption: 'Ảnh trích xuất camera - Sảnh 21g00',
+          marks: [
+            { id: 'hinh-xam', u: 0.537, v: 0.453, r: 0.04, ring: 0.03, lensAngle: -135 },
+            { id: 'tui-hang', u: 0.42, v: 0.733, r: 0.07 },
+          ],
         },
       ],
-      // Hai nhẫn trong bản tin nối với nhau; dây tới biên bản và camera rẽ ra từ giữa sợi dây đó
+      // Dòng "thuốc lá điện tử" nối với dòng "nhận 1 kiện hàng"; từ giữa sợi dây đó rẽ nhánh xuống kiện hàng trong camera
       strings: [
-        ['nhan-bao-1', 'nhan-bao-2'],
-        [{ mid: ['nhan-bao-1', 'nhan-bao-2'] }, 'nhan-vat-chung'],
-        [{ mid: ['nhan-bao-1', 'nhan-bao-2'] }, 'nhan-cctv'],
-        ['nhan-vat-chung', 'nhan-cctv'],
+        ['giay-ghi-chu', 'dong-mai-hoa'],
+        ['nhan-do', 'dong-nhan'],
+        ['hinh-xam', 'dong-hinh-xam'],
+        ['dong-kien-hang', 'dong-thuoc-la', { bend: [90, 0] }],
+        [{ mid: ['dong-kien-hang', 'dong-thuoc-la'] }, 'tui-hang', { bend: [170, -40] }],
       ],
       layouts: {
         wide: {
           width: 1000,
-          height: 830,
+          height: 840,
           captionSize: 14,
+          cardFont: 21,
           strokeWidth: 2.4,
           minMarkRadius: 14,
           lensRadius: 46,
           lensGap: 30,
           place: {
-            'bang-tin': { x: 110, y: 50, w: 520, rotate: -1.5 },
-            'bien-ban-1': { x: 650, y: 270, w: 290, rotate: 1.5 },
-            'bien-ban-2': { x: 675, y: 390, w: 290, rotate: -1 },
-            cctv: { x: 90, y: 470, w: 380, rotate: 2.5 },
+            'vat-chung': { x: 50, y: 50, w: 480, rotate: -1.5 },
+            'giai-ma': { x: 610, y: 70, w: 320, rotate: 1 },
+            'cctv-sanh': { x: 380, y: 450, w: 480, rotate: 1.5 },
           },
         },
         tall: {
           width: 600,
-          height: 1420,
+          height: 1390,
           captionSize: 17,
+          cardFont: 27,
           strokeWidth: 3,
           minMarkRadius: 16,
           lensRadius: 56,
           lensGap: 34,
           place: {
-            // Điện thoại: hai kính lúp chụm hơn để không tràn mép bảng
-            'bang-tin': {
-              x: 24,
-              y: 56,
-              w: 540,
-              rotate: -1.5,
-              marks: { 'nhan-bao-1': { lensAngle: 120, handleAngle: 110 }, 'nhan-bao-2': { lensAngle: 50, handleAngle: 80 } },
-            },
-            'bien-ban-1': { x: 50, y: 400, w: 330, rotate: -1.5 },
-            'bien-ban-2': { x: 150, y: 530, w: 330, rotate: 1.5 },
-            cctv: { x: 110, y: 1060, w: 420, rotate: 2.5 },
+            'vat-chung': { x: 30, y: 50, w: 540, rotate: -1.5, marks: { 'nhan-do': { lensAngle: 90 } } },
+            'giai-ma': { x: 100, y: 470, w: 400, rotate: 1 },
+            'cctv-sanh': { x: 30, y: 980, w: 540, rotate: 1.5 },
           },
+          // Điện thoại: camera nằm dưới tờ giải thích nên dây hình xăm vòng qua mép trái thẻ, nhánh kiện hàng vòng qua mép phải
+          strings: [
+            ['giay-ghi-chu', 'dong-mai-hoa'],
+            ['nhan-do', 'dong-nhan'],
+            ['hinh-xam', 'dong-hinh-xam', { bend: [-190, 0] }],
+            ['dong-kien-hang', 'dong-thuoc-la', { bend: [60, 0] }],
+            [{ mid: ['dong-kien-hang', 'dong-thuoc-la'] }, 'tui-hang', { bend: [90, 0] }],
+          ],
         },
       },
     },
-    // Tờ ghi chú ghim trên bảng, giải thích vì sao ba bằng chứng nối được với nhau
+    // Tờ ghi chú ghim trên bảng: cách giải mã giấy ghi chú và ý nghĩa của nó (**…** = chữ đậm)
     note: {
       label: 'Ghi chú điều tra',
-      text: 'Phạm Thùy Chi không chỉ sở hữu chiếc nhẫn đỏ này mà còn tiếp xúc với người đàn ông đeo chiếc nhẫn tương tự. Chiếc nhẫn đó được nhận dạng là nhẫn của đường dây buôn lậu nhờ thông tin trong bản tin ngày 10/10/2026. Chính vì thế, có thể bước đầu khẳng định rằng Khách sạn Mai Hoa và Phạm Thùy Chi có khả năng liên quan đến đường dây buôn lậu thuốc lá điện tử.',
+      lines: [
+        'Giải mã theo quy tắc **[Ngày báo . Số dòng . Vị trí từ . Vị trí chữ cái]**, đối chiếu với các bài báo ngày **03/10, 04/10 và 06/10**.',
+        'Kết quả cho thấy tờ giấy thực chất là một thông báo hẹn giao hàng:',
+        '- Thời gian, địa điểm: **21g00 ngày 09/10, phòng 404 Khách sạn Mai Hoa**',
+        '- Người nhận: "Nhẫn đỏ", tức **Phạm Thùy Chi**',
+        '- Người gửi: "Hình xăm trên tay", tức **người đàn ông lạ mặt**',
+        '- Hàng hóa: **1 kiện hàng có thuốc lá điện tử lậu**',
+        '→ Kết luận bước đầu: **Phạm Thùy Chi thuộc đường dây buôn lậu thuốc lá điện tử.**',
+      ],
     },
     backTo: '/p1/o1/q2',
     next: {
@@ -302,84 +345,107 @@ const explanations = {
   'p1/o2': {
     stage: 'Giai đoạn 2',
     heading: 'Hung thủ đã sát hại Phạm Thùy Chi',
-    conclusion: 'Hai bằng chứng trên đã chứng minh Trần Chi Linh là hung thủ đã sát hại Phạm Thùy Chi',
+    conclusion: 'Ba bằng chứng trên đã chứng minh Trần Chi Linh là hung thủ đã sát hại Phạm Thùy Chi',
+    // Theo Canva "Web" trang 25 (ảnh thang máy: Drive › Ảnh › "CCTV22g"): lời khai Lê Văn Út → cầu thang đang sửa (thùng sơn) → vết sơn trên giày trong camera thang máy 22g00
     wall: {
       description:
-        'Bức tường bằng chứng: hai trang Biên bản Khám nghiệm Hiện trường (trang 2 ghim đè lên nửa dưới trang 1) và Ảnh chụp màn hình điện thoại ghim trên bảng. Sợi dây chuyền trong tay nạn nhân ở Ảnh hiện trường 1 (trang 1), toàn bộ sợi dây chuyền số 3 trong ảnh vật chứng thu giữ (trang 2) và toàn bộ sợi dây chuyền người phụ nữ đeo trên cổ trong ảnh chụp màn hình được khoanh đỏ, phóng to bằng kính lúp và nối với nhau bằng dây đỏ.',
+        'Bức tường bằng chứng: trích đoạn Biên bản Lời khai Lê Văn Út, Ảnh hiện trường phụ 2 - Cầu thang đang sửa chữa và Ảnh trích xuất camera Thang máy lúc 22g00 ghim trên bảng. Đoạn khai "chỉ còn khoảng cầu thang giữa tầng 4 và 5 đang được sửa và sơn" được gạch dưới màu đỏ và nối tới thùng sơn trên cầu thang; thùng sơn nối tới vết sơn trên giày người phụ nữ trong thang máy, được phóng to bằng kính lúp.',
       items: [
-        // Biên bản Khám nghiệm Hiện trường (Drive "Tài liệu chung/Hiện trường edited.pdf"): trang 2 đè lên trang 1 nhưng chừa Ảnh hiện trường 1
         {
-          id: 'bien-ban-1',
-          src: bienBan1Image,
-          ratio: 1600 / 2263,
-          frame: 'paper',
-          // Sợi dây chuyền trong bàn tay phải nạn nhân, "Ảnh hiện trường 1" (ảnh chiếm u .417–.955, v .299–.512 của trang)
-          marks: [{ id: 'day-chuyen-nan-nhan', u: 0.598, v: 0.4704, r: 0.028, ring: 0.016, lensAngle: 0 }],
-        },
-        {
-          id: 'bien-ban-2',
-          src: bienBan2Image,
-          ratio: 1600 / 2263,
-          frame: 'paper',
-          // Toàn bộ sợi dây chuyền số 3 (dây + mặt) trong "Ảnh vật chứng thu giữ tại hiện trường 1": vòng khoanh dọc theo dáng dây
-          marks: [{ id: 'day-chuyen-vat-chung', u: 0.6215, v: 0.2196, r: 0.04, aspect: 1.8, ring: 0.034, lensAngle: 0 }],
-        },
-        {
-          id: 'gg-maps',
-          src: ggMapsImage,
-          ratio: 1080 / 1920,
+          id: 'loi-khai-ut',
+          src: loiKhaiUtImage,
+          ratio: 1334 / 226,
           frame: 'photo',
-          caption: 'Ảnh chụp màn hình điện thoại',
-          // Khoanh toàn bộ dây chuyền trên cổ người phụ nữ (từ gáy cổ áo tới mặt dây); kính lúp ra ngoài ảnh để không che dây chuyền
-          marks: [{ id: 'day-chuyen-le-tan', u: 0.773, v: 0.462, r: 0.045, ring: 0.026, lensAngle: 60, handleAngle: 50 }],
+          caption: 'Lời khai - Lê Văn Út',
+          captionAlign: 'start',
+          // Đoạn gạch chân "chỉ còn khoảng cầu thang giữa tầng 4 và 5 đang được sửa và sơn": tô lại bằng gạch dưới đỏ
+          marks: [{ id: 'cau-thang-dang-sua', u: 0.377, v: 0.695, r: 0.32, underline: true, anchorV: 0.765 }],
+        },
+        {
+          id: 'cau-thang',
+          src: cauThangImage,
+          ratio: 600 / 800,
+          frame: 'photo',
+          caption: 'Cầu thang đang sửa chữa',
+          marks: [{ id: 'thung-son', u: 0.49, v: 0.47, r: 0.17 }],
+        },
+        {
+          id: 'thang-may',
+          src: cctvThangMayImage,
+          ratio: 2370 / 1666,
+          frame: 'photo',
+          caption: 'Thang máy 22g00',
+          captionAlign: 'end',
+          marks: [{ id: 'vet-son', u: 0.316, v: 0.946, r: 0.05, ring: 0.025, lensV: 0.925, lensAngle: 0 }],
         },
       ],
       strings: [
-        ['day-chuyen-nan-nhan', 'day-chuyen-le-tan'],
-        ['day-chuyen-nan-nhan', 'day-chuyen-vat-chung'],
-        ['day-chuyen-vat-chung', 'day-chuyen-le-tan'],
+        ['cau-thang-dang-sua', 'thung-son'],
+        ['thung-son', 'vet-son'],
       ],
       layouts: {
         wide: {
           width: 1000,
-          height: 760,
+          height: 730,
           captionSize: 14,
           strokeWidth: 2.4,
           minMarkRadius: 14,
           lensRadius: 46,
           lensGap: 30,
           place: {
-            'bien-ban-1': { x: 80, y: 40, w: 300, rotate: -1.5 },
-            'bien-ban-2': { x: 110, y: 280, w: 300, rotate: 1.5 },
-            'gg-maps': { x: 640, y: 60, w: 300, rotate: 2 },
+            'loi-khai-ut': { x: 50, y: 50, w: 600, rotate: -1 },
+            'cau-thang': { x: 680, y: 170, w: 270, rotate: 2 },
+            'thang-may': { x: 80, y: 290, w: 480, rotate: -1.5, marks: { 'vet-son': { lensAngle: 0, handleAngle: -45 } } },
           },
         },
         tall: {
           width: 600,
-          height: 1520,
-          captionSize: 19,
+          height: 1300,
+          captionSize: 17,
           strokeWidth: 3,
           minMarkRadius: 16,
           lensRadius: 56,
           lensGap: 34,
           place: {
-            'bien-ban-1': { x: 40, y: 56, w: 340, rotate: -1.5 },
-            'bien-ban-2': { x: 130, y: 330, w: 340, rotate: 1.5 },
-            'gg-maps': { x: 150, y: 880, w: 300, rotate: -1.5, marks: { 'day-chuyen-le-tan': { lensAngle: 0, handleAngle: 30 } } },
+            'loi-khai-ut': { x: 20, y: 50, w: 560, rotate: -1 },
+            'cau-thang': { x: 250, y: 250, w: 320, rotate: 2 },
+            'thang-may': { x: 30, y: 790, w: 540, rotate: -1.5, marks: { 'vet-son': { lensAngle: 0, handleAngle: -45 } } },
           },
         },
       },
     },
-    // Tờ ghi chú ghim trên bảng: kết luận điều tra
+    // Tờ ghi chú ghim trên bảng: kết luận điều tra (**…** = chữ đậm)
     note: {
       label: 'Kết luận điều tra',
-      text: 'Qua đối chiếu vật chứng, cơ quan điều tra xác định sợi dây chuyền Phạm Thùy Chi nắm trong tay thuộc sở hữu của Trần Chi Linh, cho thấy Linh là người cuối cùng tiếp xúc với nạn nhân. Từ đó, cơ quan điều tra tiến hành bắt giữ và lấy lời khai để làm rõ vai trò của Linh trong vụ việc.',
+      lines: [
+        'Sau khi đối chiếu lời khai và vật chứng:',
+        '- Lê Văn Út khai **chỉ có đoạn thang bộ giữa tầng 4 và 5 còn đang sửa chữa**. Vậy đoạn thang sơn dở trong ảnh chính là **khoảng giữa tầng 4 và 5**.',
+        '- Sau khi vào thang máy xuống tầng G, có thể thấy ống quần gần bắp chân của Trần Chi Linh dính sơn, cùng màu với sơn đang dùng ở đoạn thang này.',
+        '→ Kết luận: Sau khi lên tầng 5 lúc **21 giờ 55, Trần Chi Linh đã dùng chìa khóa của mình để đi thang bộ từ tầng 5 xuống tầng 4**. Đồng thời, nhằm đánh lạc hướng điều tra, cô đã **mở phòng 404 bằng chìa khóa của chị Cúc**.',
+        '**ĐỀ NGHỊ: BẮT GIỮ VÀ HỎI CUNG TRẦN CHI LINH ĐỂ LÀM RÕ VỤ VIỆC.**',
+      ],
+    },
+    // Bằng chứng nhỏ dưới tờ kết luận, theo Canva "Web" trang 26 (__…__ = đoạn gạch chân trong biên bản)
+    extra: {
+      excerpt: {
+        label: 'Lời khai - Bành Thu Cúc',
+        question: 'Sau khi đưa bia cho phòng 404, chị đã làm gì?',
+        answer:
+          'Vì khách sạn cũng vắng nên tôi có ngồi nói chuyện với bác Út vài câu rồi __để thẻ của mình trong hộc bàn quầy như mọi ngày__, xong tôi về phòng nghỉ. Tôi ở trong phòng cho đến khi nghe bác Út la thì tôi chạy ra và thấy Chi nằm dưới đất.',
+      },
+      statement: 'Bất kỳ ai biết rõ thông tin này đều có thể dùng thẻ từ của Bành Thu Cúc',
+      log: {
+        label: 'Nhật ký truy cập thẻ từ',
+        cells: ['048', '21:57:02', 'NV-01', 'Buồng phòng', 'Cửa phòng 404', 'Hợp lệ'],
+        // Ô in đậm như bản gốc
+        strong: [2, 5],
+      },
     },
     // Trang cuối của vụ án: nút về Trang chủ và nút sang trang Tóm tắt
     backTo: '/',
     backLabel: 'Về trang chủ',
     next: {
-      text: 'Hãy mở phong bì Giai đoạn 3 để hoàn tất vụ án.',
+      text: 'Hãy mở phong bì "Sự thật" để hoàn tất vụ án.',
       to: '/p1/tom-tat',
       label: 'Xem tóm tắt',
     },
