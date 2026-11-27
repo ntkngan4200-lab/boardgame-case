@@ -9,6 +9,7 @@ import { FaqPage } from './pages/FaqPage'
 import { GuidePage } from './pages/GuidePage'
 import { HomePage } from './pages/HomePage'
 import { MissingDocsPage } from './pages/MissingDocsPage'
+import { PlayIntroPage } from './pages/PlayIntroPage'
 import { ExplanationPage } from './pages/ExplanationPage'
 import { FalseAnswerPage } from './pages/FalseAnswerPage'
 import { QuestionPage } from './pages/QuestionPage'
@@ -33,6 +34,7 @@ export default function App() {
           <Route path=":productId/:objectiveId/:questionId" element={<QuestionPage />} />
           <Route path=":productId/:objectiveId/:questionId/sai" element={<FalseAnswerPage />} />
           <Route path=":productId/tom-tat" element={<SummaryPage />} />
+          <Route path=":productId/huong-dan" element={<PlayIntroPage />} />
         </Route>
         <Route path="*" element={<ComingSoonPage />} />
       </Route>

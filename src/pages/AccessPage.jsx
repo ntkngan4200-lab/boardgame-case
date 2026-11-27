@@ -59,7 +59,8 @@ function AccessContent({ access }) {
     grantAccess(access.productId, session)
     const from = location.state?.from
     const resumeBlocked = mode === 'continue' && resumePath === access.next && from?.startsWith(`/${access.productId}/`)
-    const target = resumeBlocked ? from : resumePath
+    // Lượt chơi bắt đầu từ Câu hỏi 1: qua trang hướng dẫn ngắn trước (có link BẮT ĐẦU PHÁ ÁN vào Câu hỏi 1)
+    const target = resumeBlocked ? from : resumePath === access.next ? `/${access.productId}/huong-dan` : resumePath
     navigate(target, { replace: Boolean(from) })
   }
 

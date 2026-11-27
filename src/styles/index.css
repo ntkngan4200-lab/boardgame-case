@@ -1238,4 +1238,207 @@
     background-color: rgb(var(--maroon));
     box-shadow: 0 3px 8px rgb(0 0 0 / 0.35);
   }
+
+  /* Trang hướng dẫn sau khi nhập mã: tờ giấy giữa trang, mép nhoè dần ra nền */
+  .intro-sheet {
+    position: relative;
+    color: rgb(var(--maroon));
+    background-color: rgb(var(--blush));
+    border-radius: 6px;
+    box-shadow:
+      0 0 16px 6px rgb(var(--blush) / 0.45),
+      0 0 44px 20px rgb(var(--blush) / 0.16),
+      0 0 100px 44px rgb(var(--blush) / 0.05);
+  }
+
+  @media (min-width: 640px) {
+    .intro-sheet {
+      box-shadow:
+        0 0 24px 10px rgb(var(--blush) / 0.45),
+        0 0 64px 30px rgb(var(--blush) / 0.16),
+        0 0 150px 64px rgb(var(--blush) / 0.05);
+    }
+  }
+
+  .intro-sheet :focus-visible {
+    outline-color: rgb(var(--maroon));
+  }
+
+  .intro-start-link {
+    white-space: nowrap;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-decoration-color: rgb(var(--red));
+    text-underline-offset: 0.2em;
+  }
+
+  .intro-start-link:hover {
+    color: rgb(var(--red));
+  }
+
+  .intro-steps {
+    display: grid;
+    gap: 2.25rem;
+    line-height: 1.7;
+  }
+
+  .intro-steps p + p {
+    margin-top: 0.5rem;
+  }
+
+  @media (min-width: 640px) {
+    .intro-steps {
+      gap: 2.75rem;
+      font-size: 1.0625rem;
+    }
+  }
+
+  .intro-step__title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: 0.75rem;
+    row-gap: 0.25rem;
+    margin-bottom: 0.6rem;
+    font-size: 1.2rem;
+    font-weight: 800;
+    line-height: 1.3;
+  }
+
+  @media (min-width: 640px) {
+    .intro-step__title {
+      font-size: 1.4rem;
+    }
+  }
+
+  .intro-step__number {
+    flex: none;
+    padding: 0.15rem 0.55rem;
+    border-radius: 2px;
+    background-color: rgb(var(--maroon));
+    color: rgb(var(--blush));
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.72em;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  /* Dải tiêu đề giai đoạn thu nhỏ (giống CaseBand) */
+  .intro-band {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1.4rem 1rem 1.5rem;
+    border-radius: 3px;
+    text-align: center;
+    background-color: rgb(var(--graphite));
+    background-image:
+      repeating-linear-gradient(-45deg, rgb(0 0 0 / 0.12) 0 2px, transparent 2px 9px),
+      linear-gradient(180deg, rgb(var(--cream) / 0.05), rgb(0 0 0 / 0.22));
+    box-shadow: 0 14px 22px -16px rgb(0 0 0 / 0.8);
+  }
+
+  .intro-band__stage {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.2rem 0.65rem;
+    border-radius: 2px;
+    background-color: rgb(var(--blush));
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    line-height: 1.4;
+    text-transform: uppercase;
+  }
+
+  .intro-band__title {
+    max-width: 30rem;
+    color: rgb(var(--cream));
+    font-family: Anton, Impact, sans-serif;
+    font-size: clamp(1.4rem, 1rem + 1.8vw, 2.1rem);
+    line-height: 1.15;
+    text-wrap: balance;
+  }
+
+  /* Điện thoại minh hoạ Bước kiểm tra đáp án */
+  .intro-phone {
+    width: 9.5rem;
+    padding: 6px;
+    border-radius: 1.6rem;
+    background-color: #111;
+    box-shadow: 0 18px 30px -16px rgb(0 0 0 / 0.7);
+  }
+
+  @media (min-width: 640px) {
+    .intro-phone {
+      width: 10.5rem;
+    }
+  }
+
+  .intro-phone__screen {
+    display: flex;
+    flex-direction: column;
+    aspect-ratio: 9 / 18;
+    overflow: hidden;
+    border-radius: 1.2rem;
+    background-color: rgb(var(--tan));
+  }
+
+  .intro-phone__header {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 1.1rem 0.6rem 0.45rem;
+    background-color: rgb(var(--cream));
+  }
+
+  .intro-phone__search {
+    flex: 1;
+    height: 0.7rem;
+    border: 1px solid rgb(var(--maroon) / 0.4);
+    border-radius: 9999px;
+  }
+
+  .intro-phone__band {
+    display: flex;
+    flex-direction: column;
+    padding: 0.8rem 0.5rem;
+    background-color: rgb(var(--graphite));
+  }
+
+  .intro-phone__blur {
+    display: block;
+    height: 0.4rem;
+    border-radius: 9999px;
+    background-color: rgb(var(--maroon) / 0.7);
+    filter: blur(1.6px);
+  }
+
+  .intro-phone__sheet {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 0.7rem 0.45rem;
+    padding: 0.65rem 0.55rem;
+    border-radius: 2px;
+    background-color: rgb(var(--blush));
+  }
+
+  .intro-phone__box {
+    flex: none;
+    width: 0.55rem;
+    height: 0.55rem;
+    border: 1.5px solid rgb(var(--maroon));
+    border-radius: 2px;
+  }
+
+  .intro-phone__pill {
+    width: 2.4rem;
+    height: 0.8rem;
+    border-radius: 9999px;
+    background-color: rgb(var(--maroon));
+  }
 }

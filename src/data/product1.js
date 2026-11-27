@@ -109,7 +109,7 @@ const questions = {
         wrong: 'Phạm Thùy Chi không buôn lậu mặt hàng này. Hãy chú ý kỹ hơn đến các chi tiết được cung cấp.',
       },
     ],
-    backTo: '/p1/truy-cap',
+    backTo: '/p1/huong-dan',
     next: {
       correct: '/p1/o1/q2',
     },
