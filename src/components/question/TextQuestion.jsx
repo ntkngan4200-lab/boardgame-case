@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { getSavedSelection, saveSelection } from '../../lib/progress'
 import { checkTextAnswer } from '../../lib/textAnswer'
 import { CaseBand } from '../CaseBand'
+import { HintGate, hintGateKey } from '../hints/HintGate'
 
 // Đáp án đúng của ô được lưu theo mã truy cập, key "<questionId>:<fieldId>"
 const savedKey = (question, field) => `${question.id}:${field.id}`
@@ -118,45 +119,11 @@ export function TextQuestion({ productId, question }) {
 // Ô "Gợi ý (1)" luôn hiện dưới câu hỏi: bấm vào hiện câu hỏi phụ, trả lời đúng mới mở nội dung gợi ý (lưu theo mã truy cập)
 function QuestionHint({ productId, question }) {
   const { hint } = question
-  const key = savedKey(question, hint)
   const panelId = useId()
-  const inputId = useId()
-  const messageId = useId()
-  const [unlocked, setUnlocked] = useState(() => getSavedSelection(productId, key).length > 0)
+  const [unlocked, setUnlocked] = useState(
+    () => getSavedSelection(productId, hintGateKey(question, hint)).length > 0,
+  )
   const [open, setOpen] = useState(unlocked)
-  const [value, setValue] = useState('')
-  const [result, setResult] = useState('idle')
-  const [checking, setChecking] = useState(false)
-  const inputRef = useRef(null)
-
-  useEffect(() => {
-    if (open && !unlocked) inputRef.current?.focus()
-  }, [open, unlocked])
-
-  async function handleSubmit(event) {
-    event.preventDefault()
-    if (checking) return
-    const text = value.trim()
-    if (!text) {
-      setResult('missing')
-      return
-    }
-    setChecking(true)
-    try {
-      const correct = await checkTextAnswer(question, hint, text)
-      setResult(correct ? 'correct' : 'wrong')
-      if (correct) {
-        saveSelection(productId, key, [text])
-        setUnlocked(true)
-      }
-    } catch (error) {
-      console.error('[Kính Lúp] Không kiểm tra được đáp án', error)
-    } finally {
-      setChecking(false)
-    }
-  }
-
-  const message = { missing: 'Hãy điền đáp án trước khi xác nhận.', wrong: hint.wrong }[result]
 
   return (
     <div className="mx-auto mt-8 max-w-3xl">
@@ -180,37 +147,7 @@ function QuestionHint({ productId, question }) {
               <p className="hint-note__text">{hint.text}</p>
             </>
           ) : (
-            <form noValidate onSubmit={handleSubmit}>
-              <span className="hint-note__label">Câu hỏi phụ để mở gợi ý</span>
-              <label htmlFor={inputId} className="hint-note__text mt-2 block">
-                {hint.label}
-              </label>
-              <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
-                <input
-                  ref={inputRef}
-                  id={inputId}
-                  className="code-input code-input--answer sm:!mx-0 sm:max-w-none sm:flex-1"
-                  placeholder="Nhập đáp án"
-                  autoComplete="off"
-                  spellCheck={false}
-                  maxLength={60}
-                  value={value}
-                  readOnly={checking}
-                  onChange={(event) => {
-                    setValue(event.target.value)
-                    setResult('idle')
-                  }}
-                  aria-invalid={result === 'wrong'}
-                  aria-describedby={messageId}
-                />
-                <button type="submit" className="confirm-button min-w-36 px-6" disabled={checking}>
-                  Mở gợi ý
-                </button>
-              </div>
-              <p id={messageId} className="mt-3 min-h-5 text-sm font-semibold leading-relaxed text-maroon">
-                {message ?? ''}
-              </p>
-            </form>
+            <HintGate productId={productId} question={question} gate={hint} onUnlock={() => setUnlocked(true)} />
           )}
         </div>
       ) : null}

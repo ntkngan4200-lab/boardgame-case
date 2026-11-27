@@ -16,7 +16,7 @@ export function FalseAnswerPage() {
 
   return (
     // key: reset số gợi ý đã mở khi sang False Answer Page của câu khác
-    <Hints.Root key={question.id} hints={hints}>
+    <Hints.Root key={question.id} hints={hints} productId={productId} question={question}>
       <title>{`${question.stage}: Chưa chính xác · Kính Lúp`}</title>
       <CaseBand stage={question.stage} heading={question.heading} />
 

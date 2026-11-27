@@ -196,11 +196,7 @@ const questions = {
 const falseAnswers = {
   'p1/o1/q2': {
     claim: 'Tổ hợp bằng chứng chưa chứng minh trực tiếp mục đích Phạm Thùy Chi đến Khách sạn Mai Hoa. Hãy chú ý kỹ hơn đến các chi tiết được cung cấp.',
-    hints: [
-      'Vật chứng thu giữ tại hiện trường có điểm gì bất thường?',
-      'Tại sao Phạm Thùy Chi phải giữ một chiếc nhẫn bên trong túi váy?',
-      'Liệu chiếc nhẫn Phạm Thùy Chi cất giữ có phải là chiếc duy nhất?',
-    ],
+    hints: [],
   },
   'p1/o2/q1': {
     claim: 'Người này không phải là hung thủ đã sát hại Phạm Thùy Chi. Hãy chú ý kỹ hơn đến các chi tiết được cung cấp.',
@@ -209,8 +205,23 @@ const falseAnswers = {
   'p1/o2/q2': {
     claim: 'Tổ hợp bằng chứng chưa chứng minh trực tiếp Trần Chi Linh là hung thủ đã sát hại Phạm Thùy Chi. Hãy chú ý kỹ hơn đến các chi tiết được cung cấp.',
     hints: [
-      'Ai là người có nhiều khả năng đã gặp nạn nhân cuối cùng?',
-      'Tại sao Phạm Thùy Chi phải nắm chặt sợi dây chuyền trong giờ phút cuối cùng?',
+      // Gợi ý 1 khoá bằng câu hỏi phụ. Đáp án: Dũng, Dũng Ngã Sáu, Vũ Văn Dũng, Văn Dũng
+      // (hash "p1-o2-q2:goi-y-1:<cụm từ>", câu trả lời chứa cụm "dung" là đúng).
+      {
+        text: 'Hãy dùng phương pháp loại trừ, ai là người có nhiều khả năng gặp nạn nhân cuối cùng nhất?',
+        gate: {
+          id: 'goi-y-1',
+          label: 'Nhật ký thẻ từ ghi nhận Trần Chi Linh đã lên tầng 4 lúc 16g00 ngày 09/10. Vậy Linh đã gặp ai vào thời điểm đó?',
+          phraseHashes: [
+            '0314112f21c54a2930f6ccbb7f8096b733c9686f8524e4473868e2a3574f17a6',
+            'f679c6da319a5bcb8547557f91ed61b3ba3e96eb4e544c596caed87603a0d7e6',
+            '35c04fd7341e9e78ac0f60a1f056010d2afd5b7957dad4f95afe477ceea34196',
+            '865d7aa2ef87130f39f7010ffc7642a816abf999e65822edb606df3745cbe722',
+          ],
+          wrong: 'Chưa chính xác. Hãy đối chiếu kỹ nhật ký thẻ từ với lời khai.',
+        },
+      },
+      'Ai là người có sự thay đổi, có thể nhận thấy được, sau thời điểm nạn nhân tử vong?',
     ],
   },
 }
